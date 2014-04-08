@@ -72,7 +72,10 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
             final AsymmetricItem item = items.get(adjustedPosition);
             LinearLayout childLayout;
 
-            if (listView.getNumColumns() > 2 && i > 1 && items.get(adjustedPosition - 2).getColumnSpan() > 1) {
+            if (listView.getNumColumns() > 2 &&
+                    i > 1 &&
+                    items.get(adjustedPosition - 2).getColumnSpan() > 1) {
+
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
                 Log.i(TAG, "case 1");
                 // We're on the third column and the current item should go below
@@ -83,7 +86,10 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                 // |    1   |____|
                 // |        |(3) |
                 // |________|____|
-            } else if (listView.getNumColumns() > 2 && i > 1 && items.get(adjustedPosition - 1).getColumnSpan() > 1) {
+            } else if (listView.getNumColumns() > 2 &&
+                    i > 1 &&
+                    items.get(adjustedPosition - 1).getColumnSpan() > 1) {
+
                 childLayout = (LinearLayout) layout.getChildAt(i - 2);
                 Log.i(TAG, "case 2");
                 // We're on the first column and the current item should go below
@@ -94,12 +100,21 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                 // |____|   2    |
                 // |(3) |        |
                 // |____|________|
-            } else if (listView.getNumColumns() > 2 && items.get(adjustedPosition + 1).getColumnSpan() > 1) {
+            } else if (listView.getNumColumns() > 2 &&
+                    i < listView.getNumColumns() - 1 &&
+                    adjustedPosition + 1 < items.size() &&
+                    items.get(adjustedPosition + 1).getColumnSpan() > 1) {
+
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
                 Log.i(TAG, "case 3");
-                // There is not enough space to fit this item because the column span
-                // overflows the column count. In this case, we clear the previous column,
-                // moving the item from there into the column before that.
+                // There is not enough space to fit the next item because the column span
+                // overflows the column count. In this case, we push the current item
+                // into the previous column
+                //  _____________
+                // | 1  |        |
+                // |____|   3    |
+                // |(2) |        |
+                // |____|________|
             } else {
                 currentChildIndex = 0;
                 childLayout = (LinearLayout) layout.getChildAt(i);
