@@ -3,6 +3,7 @@ package com.felipecsl.asymmetricgridview.app.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -51,7 +52,8 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
-        final int actualPosition = position * listView.getNumColumns();
+        final int numColumns = listView.getNumColumns();
+        final int actualPosition = position * numColumns;
 
         LinearLayout layout;
 
@@ -86,7 +88,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
             LinearLayout childLayout;
 
-            if (listView.getNumColumns() > 2 &&
+            if (numColumns > 2 &&
                     i > 1 &&
                     getItem(adjustedPosition - 2).getColumnSpan() > 1) {
 
@@ -99,10 +101,13 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                 // |    1   |____|
                 // |        |(3) |
                 // |________|____|
-            } else if (listView.getNumColumns() > 2 &&
+            } else if (numColumns > 2 &&
                     i > 1 &&
+                    i == numColumns - 1 &&
+                    numColumns % 2 == 1 &&
                     getItem(adjustedPosition - 1).getColumnSpan() > 1) {
 
+                Log.d(TAG, "case 2 for position " + adjustedPosition);
                 childLayout = (LinearLayout) layout.getChildAt(i - 2);
                 // We're on the first column and the current item should go below
                 // the previous one, so we actually grab the layout with index == 0
@@ -112,8 +117,8 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                 // |____|   2    |
                 // |(3) |        |
                 // |____|________|
-            } else if (listView.getNumColumns() > 2 &&
-                    i < listView.getNumColumns() - 1 &&
+            } else if (numColumns > 2 &&
+                    i < numColumns - 1 &&
                     adjustedPosition + 1 < getActualCount() &&
                     getItem(adjustedPosition + 1).getColumnSpan() > 1) {
 
