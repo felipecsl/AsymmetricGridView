@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.felipecsl.asymmetricgridview.app.MainActivity" >
+
+    <item android:id="@+id/one_column"
+          android:title="1 Column"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
+
+    <item android:id="@+id/two_columnns"
+        android:title="2 Columns"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/three_columns"
+          android:title="3 Columns"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
+</menu>

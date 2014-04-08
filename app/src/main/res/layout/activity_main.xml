@@ -1,0 +1,12 @@
+<com.felipecsl.asymmetricgridview.app.widget.AsymmetricGridView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:divider="@android:color/transparent"
+    android:fadingEdge="none"
+    android:focusable="false"
+    android:gravity="center"
+    android:dividerHeight="5dp"
+    android:listSelector="#00000000"/>
