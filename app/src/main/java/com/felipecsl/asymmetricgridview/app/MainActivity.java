@@ -5,9 +5,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.felipecsl.asymmetricgridview.app.model.Item;
+import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
+import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.app.widget.AsymmetricGridView;
-import com.felipecsl.asymmetricgridview.app.widget.AsymmetricGridViewAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.ListAdapter;
 
 import java.util.ArrayList;
@@ -27,10 +27,12 @@ public class MainActivity extends ActionBarActivity {
         listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
 
         adapter = new ListAdapter(this, listView);
-        final List<Item> items = new ArrayList<>();
+        final List<AsymmetricItem> items = new ArrayList<>();
 
-        for (int i = 0; i < 100; i++)
-            items.add(new Item());
+        for (int i = 0; i < 100; i++) {
+            int span = i % 10 == 0 ? 2 : 1;
+            items.add(new DemoItem(span, span));
+        }
 
         adapter.appendObjects(items);
 
@@ -39,7 +41,6 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }

@@ -7,12 +7,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.felipecsl.asymmetricgridview.app.R;
-import com.felipecsl.asymmetricgridview.app.model.BaseItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class EndlessAdapter<T extends BaseItem>
+public abstract class EndlessAdapter<T>
         extends BaseAdapter
         implements DynamicAdapter<T> {
 
@@ -40,10 +39,7 @@ public abstract class EndlessAdapter<T extends BaseItem>
 
     @Override
     public long getItemId(final int position) {
-        if (position >= items.size())
-            return 0;
-
-        return items.get(position).getId();
+        return position;
     }
 
     @Override

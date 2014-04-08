@@ -1,9 +1,8 @@
 package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.view.GravityCompat;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -11,9 +10,9 @@ import android.widget.LinearLayout;
 
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.Utils;
-import com.felipecsl.asymmetricgridview.app.model.Item;
+import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
 
-public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Item> {
+public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<AsymmetricItem> {
 
     protected final int defaultHorizontalSpacing;
     protected final AsymmetricGridView listView;
@@ -41,48 +40,54 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Item> {
 
         if (convertView == null) {
             layout = new LinearLayout(context);
+            layout.setBackgroundColor(Color.parseColor("#00ff00"));
+
             if (Build.VERSION.SDK_INT >= 11) {
                 layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-                layout.setDividerDrawable(getContext().getResources().getDrawable(R.drawable.item_divider));
+                layout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_horizontal));
             }
 
-            layout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT));
-            layout.setPadding(defaultHorizontalSpacing, 0, defaultHorizontalSpacing, 0);
-        } else {
+            layout.setLayoutParams(new AbsListView.LayoutParams(
+                    AbsListView.LayoutParams.MATCH_PARENT,
+                    AbsListView.LayoutParams.WRAP_CONTENT));
+        } else
             layout = (LinearLayout) convertView;
-        }
+
+        int currentChildIndex = 0;
 
         for (int i = 0; i < listView.getNumColumns(); i++) {
             final int adjustedPosition = actualPosition + i;
+            final AsymmetricItem item = items.get(adjustedPosition);
+            LinearLayout childLayout;
 
-            View childConvertView = layout.getChildAt(i);
-            if (childConvertView != null && childConvertView.getId() == R.id.pendingView) {
-                layout.removeView(childConvertView);
-                childConvertView = null;
+            if (i > 1 && items.get(adjustedPosition - 2).getColumnSpan() > 1)
+                childLayout = (LinearLayout) layout.getChildAt(i - 1);
+            else {
+                currentChildIndex = 0;
+                childLayout = (LinearLayout) layout.getChildAt(i);
             }
 
-            if (adjustedPosition > items.size() || (!hasMorePages && adjustedPosition >= items.size())) {
-                for (int j = i; j < listView.getNumColumns(); j++) {
-                    View v = layout.getChildAt(j);
-                    if (v != null)
-                        layout.removeView(v);
+            if (childLayout == null) {
+                childLayout = new LinearLayout(context);
+                childLayout.setOrientation(LinearLayout.VERTICAL);
+                if (Build.VERSION.SDK_INT >= 11) {
+                    childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+                    childLayout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_vertical));
                 }
+                childLayout.setLayoutParams(new AbsListView.LayoutParams(
+                        AbsListView.LayoutParams.WRAP_CONTENT,
+                        AbsListView.LayoutParams.MATCH_PARENT));
+                childLayout.setBackgroundColor(Color.parseColor("#0000ff"));
 
-                break;
+                layout.addView(childLayout);
             }
+
+            View childConvertView = childLayout.getChildAt(currentChildIndex++);
 
             final View v = getSuperView(adjustedPosition, childConvertView, parent);
 
-            if (v.getId() != R.id.pendingView) {
-                if (childConvertView == null) {
-                    layout.addView(v);
-                    layout.setGravity(GravityCompat.START);
-                }
-            } else {
-                layout.removeAllViews();
-                layout.addView(v);
-                layout.setGravity(Gravity.CENTER);
-                break;
+            if (childConvertView == null) {
+                childLayout.addView(v);
             }
         }
 

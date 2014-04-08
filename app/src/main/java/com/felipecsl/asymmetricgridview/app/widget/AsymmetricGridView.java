@@ -36,13 +36,6 @@ public class AsymmetricGridView extends ListView {
         });
     }
 
-    /**
-     * Since MultiColumnListView is used by multiple adapters in parallel,
-     * for the user profile screen, we need to provide a way for people
-     * to dynamically change the list view column width.
-     *
-     * @param width
-     */
     public void setRequestedColumnWidth(final int width) {
         requestedColumnWidth = width;
     }
