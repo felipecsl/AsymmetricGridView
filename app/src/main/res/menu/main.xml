@@ -17,4 +17,14 @@
           android:title="3 Columns"
           android:orderInCategory="100"
           app:showAsAction="never" />
+
+    <item android:id="@+id/four_columns"
+          android:title="4 Columns"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
+
+    <item android:id="@+id/five_columns"
+          android:title="5 Columns"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
 </menu>

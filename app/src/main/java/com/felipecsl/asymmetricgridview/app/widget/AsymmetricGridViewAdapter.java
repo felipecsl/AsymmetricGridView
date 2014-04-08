@@ -3,6 +3,7 @@ package com.felipecsl.asymmetricgridview.app.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -14,6 +15,7 @@ import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
 
 public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<AsymmetricItem> {
 
+    private static final String TAG = "AsymmetricGridViewAdapter";
     protected final int defaultHorizontalSpacing;
     protected final AsymmetricGridView listView;
 
@@ -57,12 +59,36 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
 
         for (int i = 0; i < listView.getNumColumns(); i++) {
             final int adjustedPosition = actualPosition + i;
+
+            if (adjustedPosition > items.size() - 1)
+                break;
+
             final AsymmetricItem item = items.get(adjustedPosition);
             LinearLayout childLayout;
 
-            if (i > 1 && items.get(adjustedPosition - 2).getColumnSpan() > 1)
+            if (listView.getNumColumns() > 2 && i > 1 && adjustedPosition > 1 && items.get(adjustedPosition - 2).getColumnSpan() > 1) {
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
-            else {
+                Log.i(TAG, "case 1");
+                // We're on the third column and the current item should go below
+                // the previous one, so we actually grab the layout with index == i - 1
+                // because in this case we have one less column.
+                //  _____________
+                // |        | 2  |
+                // |    1   |____|
+                // |        |(3) |
+                // |________|____|
+            } else if (listView.getNumColumns() > 2 && i > 1 && items.size() > adjustedPosition && items.get(adjustedPosition - 1).getColumnSpan() > 1) {
+                childLayout = (LinearLayout) layout.getChildAt(i - 2);
+                Log.i(TAG, "case 2");
+                // We're on the first column and the current item should go below
+                // the previous one, so we actually grab the layout with index == 0
+                // because in this case we have one less column.
+                //  _____________
+                // | 1  |        |
+                // |____|   3    |
+                // |(2) |        |
+                // |____|________|
+            } else {
                 currentChildIndex = 0;
                 childLayout = (LinearLayout) layout.getChildAt(i);
             }

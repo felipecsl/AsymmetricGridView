@@ -60,6 +60,14 @@ public class MainActivity extends ActionBarActivity {
             listView.setRequestedColumnWidth(Utils.dpToPx(this, 90));
             listView.determineColumns();
             listView.setAdapter(adapter);
+        } else if (id == R.id.four_columns) {
+            listView.setRequestedColumnWidth(Utils.dpToPx(this, 70));
+            listView.determineColumns();
+            listView.setAdapter(adapter);
+        } else if (id == R.id.five_columns) {
+            listView.setRequestedColumnWidth(Utils.dpToPx(this, 60));
+            listView.determineColumns();
+            listView.setAdapter(adapter);
         }
         return super.onOptionsItemSelected(item);
     }
