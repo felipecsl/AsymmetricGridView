@@ -16,6 +16,7 @@ public class AsymmetricGridView extends ListView {
     private final Rect padding;
     private final int defaultPadding;
     private final int requestedHorizontalSpacing;
+    private final int requestedVerticalSpacing;
     private int requestedColumnWidth;
 
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
@@ -23,6 +24,7 @@ public class AsymmetricGridView extends ListView {
 
         defaultPadding = Utils.dpToPx(context, 5);
         requestedHorizontalSpacing = defaultPadding;
+        requestedVerticalSpacing = defaultPadding;
         padding = new Rect(defaultPadding, defaultPadding, defaultPadding, defaultPadding);
 
         getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -38,6 +40,14 @@ public class AsymmetricGridView extends ListView {
 
     public void setRequestedColumnWidth(final int width) {
         requestedColumnWidth = width;
+    }
+
+    public int getRequestedHorizontalSpacing() {
+        return requestedHorizontalSpacing;
+    }
+
+    public int getRequestedVerticalSpacing() {
+        return requestedVerticalSpacing;
     }
 
     @Override
@@ -71,7 +81,7 @@ public class AsymmetricGridView extends ListView {
     }
 
     public int getColumnWidth() {
-        return getAvailableSpace() / numColumns;
+        return (getAvailableSpace() - ((numColumns - 1) * requestedHorizontalSpacing)) / numColumns;
     }
 
     public int getAvailableSpace() {

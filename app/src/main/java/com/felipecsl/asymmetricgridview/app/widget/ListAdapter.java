@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,11 +19,17 @@ public class ListAdapter extends AsymmetricGridViewAdapter {
     }
 
     private int getRowHeight(final AsymmetricItem item) {
-        return (int) (listView.getColumnWidth() * 0.8) * item.getColumnSpan();
+        final int rowHeight = listView.getColumnWidth() * item.getRowSpan();
+        // when the item spans multiple rows, we need to account for the vertical padding
+        // and add that to the total final height
+        return rowHeight + ((item.getRowSpan() - 1) * listView.getRequestedVerticalSpacing());
     }
 
     private int getRowWidth(final AsymmetricItem item) {
-        return Math.min(listView.getColumnWidth() * item.getRowSpan(), Utils.getScreenWidth(getContext()));
+        final int rowWidth = listView.getColumnWidth() * item.getColumnSpan();
+        // when the item spans multiple columns, we need to account for the horizontal padding
+        // and add that to the total final width
+        return Math.min(rowWidth + ((item.getColumnSpan() - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
     }
 
     @Override

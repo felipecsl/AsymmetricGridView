@@ -77,7 +77,6 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                     items.get(adjustedPosition - 2).getColumnSpan() > 1) {
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
-                Log.i(TAG, "case 1");
                 // We're on the third column and the current item should go below
                 // the previous one, so we actually grab the layout with index == i - 1
                 // because in this case we have one less column.
@@ -91,7 +90,6 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                     items.get(adjustedPosition - 1).getColumnSpan() > 1) {
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 2);
-                Log.i(TAG, "case 2");
                 // We're on the first column and the current item should go below
                 // the previous one, so we actually grab the layout with index == 0
                 // because in this case we have one less column.
@@ -106,7 +104,6 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                     items.get(adjustedPosition + 1).getColumnSpan() > 1) {
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
-                Log.i(TAG, "case 3");
                 // There is not enough space to fit the next item because the column span
                 // overflows the column count. In this case, we push the current item
                 // into the previous column
