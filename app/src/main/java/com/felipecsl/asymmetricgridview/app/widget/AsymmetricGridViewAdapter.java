@@ -3,35 +3,50 @@ package com.felipecsl.asymmetricgridview.app.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.Utils;
 import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
 
-public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<AsymmetricItem> {
+import java.util.List;
+
+public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricItem> {
 
     private static final String TAG = "AsymmetricGridViewAdapter";
-    protected final int defaultHorizontalSpacing;
     protected final AsymmetricGridView listView;
+    private final Context context;
+    private final List<AsymmetricItem> items;
 
-    protected AsymmetricGridViewAdapter(final Context context, final AsymmetricGridView listView) {
-        super(context);
+    protected AsymmetricGridViewAdapter(final Context context,
+                                        final AsymmetricGridView listView,
+                                        final List<AsymmetricItem> items) {
 
+        super(context, 0, items);
+
+        this.items = items;
+        this.context = context;
         this.listView = listView;
-        defaultHorizontalSpacing = Utils.dpToPx(context, 5);
     }
 
-    public boolean getHasMorePages() {
-        return hasMorePages;
+    public abstract View getActualView(final int position, final View convertView, final ViewGroup parent);
+
+    protected int getRowHeight(final AsymmetricItem item) {
+        final int rowHeight = listView.getColumnWidth() * item.getRowSpan();
+        // when the item spans multiple rows, we need to account for the vertical padding
+        // and add that to the total final height
+        return rowHeight + ((item.getRowSpan() - 1) * listView.getRequestedVerticalSpacing());
     }
 
-    public int getDefaultHorizontalSpacing() {
-        return defaultHorizontalSpacing;
+    protected int getRowWidth(final AsymmetricItem item) {
+        final int rowWidth = listView.getColumnWidth() * item.getColumnSpan();
+        // when the item spans multiple columns, we need to account for the horizontal padding
+        // and add that to the total final width
+        return Math.min(rowWidth + ((item.getColumnSpan() - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
     }
 
     @Override
@@ -66,15 +81,14 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
         for (int i = 0; i < listView.getNumColumns(); i++) {
             final int adjustedPosition = actualPosition + i;
 
-            if (adjustedPosition > items.size() - 1)
+            if (adjustedPosition > getActualCount() - 1)
                 break;
 
-            final AsymmetricItem item = items.get(adjustedPosition);
             LinearLayout childLayout;
 
             if (listView.getNumColumns() > 2 &&
                     i > 1 &&
-                    items.get(adjustedPosition - 2).getColumnSpan() > 1) {
+                    getItem(adjustedPosition - 2).getColumnSpan() > 1) {
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
                 // We're on the third column and the current item should go below
@@ -87,7 +101,7 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                 // |________|____|
             } else if (listView.getNumColumns() > 2 &&
                     i > 1 &&
-                    items.get(adjustedPosition - 1).getColumnSpan() > 1) {
+                    getItem(adjustedPosition - 1).getColumnSpan() > 1) {
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 2);
                 // We're on the first column and the current item should go below
@@ -100,8 +114,8 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
                 // |____|________|
             } else if (listView.getNumColumns() > 2 &&
                     i < listView.getNumColumns() - 1 &&
-                    adjustedPosition + 1 < items.size() &&
-                    items.get(adjustedPosition + 1).getColumnSpan() > 1) {
+                    adjustedPosition + 1 < getActualCount() &&
+                    getItem(adjustedPosition + 1).getColumnSpan() > 1) {
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
                 // There is not enough space to fit the next item because the column span
@@ -134,7 +148,7 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
 
             View childConvertView = childLayout.getChildAt(currentChildIndex++);
 
-            final View v = getSuperView(adjustedPosition, childConvertView, parent);
+            final View v = getActualView(adjustedPosition, childConvertView, parent);
 
             if (childConvertView == null) {
                 childLayout.addView(v);
@@ -144,12 +158,14 @@ public abstract class AsymmetricGridViewAdapter extends EndlessAdapter<Asymmetri
         return layout;
     }
 
-    public View getSuperView(final int position, final View convertView, final ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+    public int getActualCount() {
+        // This guy returns the actual item count that we have
+        return items.size();
     }
 
     @Override
     public int getCount() {
-        return (int) Math.ceil((double) items.size() / (double) listView.getNumColumns()) + (hasMorePages ? 1 : 0);
+        // Returns the row count for ListView display purposes
+        return (int) Math.ceil((double) getActualCount() / (double) listView.getNumColumns());
     }
 }

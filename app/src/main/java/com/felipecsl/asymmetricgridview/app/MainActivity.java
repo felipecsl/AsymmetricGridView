@@ -26,7 +26,6 @@ public class MainActivity extends ActionBarActivity {
         listView = (AsymmetricGridView) findViewById(R.id.listView);
         listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
 
-        adapter = new ListAdapter(this, listView);
         final List<AsymmetricItem> items = new ArrayList<>();
 
         for (int i = 0; i < 100; i++) {
@@ -34,7 +33,7 @@ public class MainActivity extends ActionBarActivity {
             items.add(new DemoItem(span, span));
         }
 
-        adapter.appendObjects(items);
+        adapter = new ListAdapter(this, listView, items);
 
         listView.setAdapter(adapter);
     }
