@@ -19,6 +19,7 @@ import java.util.List;
 public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricItem> {
 
     private static final String TAG = "AsymmetricGridViewAdapter";
+    private static final boolean DEBUG = false;
     protected final AsymmetricGridView listView;
     private final Context context;
     private final List<AsymmetricItem> items;
@@ -53,13 +54,15 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
         final int numColumns = listView.getNumColumns();
+        final int totalItems = getActualCount();
         final int actualPosition = position * numColumns;
 
         LinearLayout layout;
 
         if (convertView == null) {
             layout = new LinearLayout(context);
-            layout.setBackgroundColor(Color.parseColor("#00ff00"));
+            if (DEBUG)
+                layout.setBackgroundColor(Color.parseColor("#00ff00"));
 
             if (Build.VERSION.SDK_INT >= 11) {
                 layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -72,6 +75,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         } else
             layout = (LinearLayout) convertView;
 
+        // Clear all layout children before starting
         for (int j = 0; j < layout.getChildCount(); j++) {
             LinearLayout tempChild = (LinearLayout) layout.getChildAt(j);
             tempChild.removeAllViews();
@@ -80,10 +84,10 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
         int currentChildIndex = 0;
 
-        for (int i = 0; i < listView.getNumColumns(); i++) {
+        for (int i = 0; i < numColumns; i++) {
             final int adjustedPosition = actualPosition + i;
 
-            if (adjustedPosition > getActualCount() - 1)
+            if (adjustedPosition > totalItems - 1)
                 break;
 
             LinearLayout childLayout;
@@ -91,6 +95,9 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
             if (numColumns > 2 &&
                     i > 1 &&
                     getItem(adjustedPosition - 2).getColumnSpan() > 1) {
+
+                if (DEBUG)
+                    Log.d(TAG, "Case 1 for item " + adjustedPosition);
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
                 // We're on the third column and the current item should go below
@@ -107,7 +114,9 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                     numColumns % 2 == 1 &&
                     getItem(adjustedPosition - 1).getColumnSpan() > 1) {
 
-                Log.d(TAG, "case 2 for position " + adjustedPosition);
+                if (DEBUG)
+                    Log.d(TAG, "Case 2 for item " + adjustedPosition);
+
                 childLayout = (LinearLayout) layout.getChildAt(i - 2);
                 // We're on the first column and the current item should go below
                 // the previous one, so we actually grab the layout with index == 0
@@ -119,8 +128,11 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                 // |____|________|
             } else if (numColumns > 2 &&
                     i < numColumns - 1 &&
-                    adjustedPosition + 1 < getActualCount() &&
+                    adjustedPosition + 1 < totalItems &&
                     getItem(adjustedPosition + 1).getColumnSpan() > 1) {
+
+                if (DEBUG)
+                    Log.d(TAG, "Case 3 for item " + adjustedPosition);
 
                 childLayout = (LinearLayout) layout.getChildAt(i - 1);
                 // There is not enough space to fit the next item because the column span
@@ -132,6 +144,9 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                 // |(2) |        |
                 // |____|________|
             } else {
+                if (DEBUG)
+                    Log.d(TAG, "Case 4 for item " + adjustedPosition);
+
                 currentChildIndex = 0;
                 childLayout = (LinearLayout) layout.getChildAt(i);
             }
@@ -146,7 +161,9 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                 childLayout.setLayoutParams(new AbsListView.LayoutParams(
                         AbsListView.LayoutParams.WRAP_CONTENT,
                         AbsListView.LayoutParams.MATCH_PARENT));
-                childLayout.setBackgroundColor(Color.parseColor("#0000ff"));
+
+                if (DEBUG)
+                    childLayout.setBackgroundColor(Color.parseColor("#0000ff"));
 
                 layout.addView(childLayout);
             }
@@ -155,9 +172,8 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
             final View v = getActualView(adjustedPosition, childConvertView, parent);
 
-            if (childConvertView == null) {
+            if (childConvertView == null)
                 childLayout.addView(v);
-            }
         }
 
         return layout;
