@@ -1,6 +1,6 @@
 # AsymmetricGridView
 
-An Android listView that implements multiple columns and variable sized elements.
+An Android custom ListView that implements multiple columns and variable sized elements.
 
 Alpha version. Use with caution. Please report issues found.
 

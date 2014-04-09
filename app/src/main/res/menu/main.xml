@@ -27,4 +27,9 @@
           android:title="5 Columns"
           android:orderInCategory="100"
           app:showAsAction="never" />
+
+    <item android:id="@+id/append_items"
+          android:title="Add more items"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
 </menu>

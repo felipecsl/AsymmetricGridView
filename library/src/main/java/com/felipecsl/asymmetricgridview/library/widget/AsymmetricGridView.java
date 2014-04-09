@@ -8,6 +8,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.felipecsl.asymmetricgridview.library.Utils;
+import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
+
+import java.util.List;
 
 public class AsymmetricGridView extends ListView {
 
@@ -39,10 +42,13 @@ public class AsymmetricGridView extends ListView {
         });
     }
 
-    @Override
-    public void setAdapter(final ListAdapter adapter) {
+    public void setAdapter(final AsymmetricGridViewAdapter adapter) {
         super.setAdapter(adapter);
-        ((AsymmetricGridViewAdapter) adapter).calculateItemsPerRow();
+        adapter.recalculateItemsPerRow();
+    }
+
+    public AsymmetricGridViewAdapter getAdapter() {
+        return (AsymmetricGridViewAdapter) super.getAdapter();
     }
 
     public void setRequestedColumnWidth(final int width) {
@@ -61,6 +67,10 @@ public class AsymmetricGridView extends ListView {
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         determineColumns();
+    }
+
+    public void appendItems(final List<AsymmetricItem> items) {
+        getAdapter().appendItems(items);
     }
 
     public int determineColumns() {

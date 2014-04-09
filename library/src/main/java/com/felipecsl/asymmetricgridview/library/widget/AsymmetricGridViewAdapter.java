@@ -187,9 +187,10 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         return childLayout;
     }
 
-    public int getActualCount() {
-        // This guy returns the actual item count that we have
-        return items.size();
+    public void appendItems(List<AsymmetricItem> newItems) {
+        items.addAll(newItems);
+        calculateItemsPerRow(getCount(), newItems);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -198,14 +199,16 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         return itemsPerRow.size();
     }
 
-    public void calculateItemsPerRow() {
-        int currentRow = 0;
-        final List<AsymmetricItem> itemsCopy = new ArrayList<>();
+    public void recalculateItemsPerRow() {
         itemsPerRow.clear();
-        itemsCopy.addAll(items);
+        final List<AsymmetricItem> itemsToAdd = new ArrayList<>();
+        itemsToAdd.addAll(items);
+        calculateItemsPerRow(0, itemsToAdd);
+    }
 
-        while (!itemsCopy.isEmpty()) {
-            final RowInfo itemsThatFit = calculateItemsForRow(itemsCopy);
+    private void calculateItemsPerRow(int currentRow, List<AsymmetricItem> itemsToAdd) {
+        while (!itemsToAdd.isEmpty()) {
+            final RowInfo itemsThatFit = calculateItemsForRow(itemsToAdd);
 
             if (itemsThatFit.getItems().isEmpty()) {
                 // we can't fit a single item inside a row.
@@ -215,7 +218,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
             if (DEBUG) {
                 for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                    itemsCopy.remove(0);
+                    itemsToAdd.remove(0);
             }
 
             itemsPerRow.put(currentRow, itemsThatFit);

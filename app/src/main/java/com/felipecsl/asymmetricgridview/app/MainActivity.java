@@ -27,6 +27,12 @@ public class MainActivity extends ActionBarActivity {
         listView = (AsymmetricGridView) findViewById(R.id.listView);
         listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
 
+        adapter = new ListAdapter(this, listView, get100Items());
+
+        listView.setAdapter(adapter);
+    }
+
+    private static List<AsymmetricItem> get100Items() {
         final List<AsymmetricItem> items = new ArrayList<>();
 
         for (int i = 0; i < 100; i++) {
@@ -34,9 +40,7 @@ public class MainActivity extends ActionBarActivity {
             items.add(new DemoItem(span, span));
         }
 
-        adapter = new ListAdapter(this, listView, items);
-
-        listView.setAdapter(adapter);
+        return items;
     }
 
     @Override
@@ -68,6 +72,8 @@ public class MainActivity extends ActionBarActivity {
             listView.setRequestedColumnWidth(Utils.dpToPx(this, 60));
             listView.determineColumns();
             listView.setAdapter(adapter);
+        } else if (id == R.id.append_items) {
+            listView.appendItems(get100Items());
         }
         return super.onOptionsItemSelected(item);
     }
