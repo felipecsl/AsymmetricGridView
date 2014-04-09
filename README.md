@@ -38,6 +38,11 @@ protected void onCreate(Bundle savedInstanceState) {
 ![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_4_cols.png)
 ![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_5_cols.png)
 
+### Limitations
+
+Currently only supports items with rowSpan = 2 and columnSpan = 2.
+In the near future it will support different layout configurations.
+
 ### Contributing
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
