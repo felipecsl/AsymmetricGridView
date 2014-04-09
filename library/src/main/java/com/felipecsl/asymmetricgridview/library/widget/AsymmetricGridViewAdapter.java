@@ -25,10 +25,14 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
         private final List<AsymmetricItem> items;
         private final int rowHeight;
+        private final float spaceLeft;
 
-        public RowInfo(final int rowHeight, final List<AsymmetricItem> items) {
+        public RowInfo(final int rowHeight,
+                       final List<AsymmetricItem> items,
+                       final float spaceLeft) {
             this.rowHeight = rowHeight;
             this.items = items;
+            this.spaceLeft = spaceLeft;
         }
 
         public List<AsymmetricItem> getItems() {
@@ -37,6 +41,10 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
         public int getRowHeight() {
             return rowHeight;
+        }
+
+        public float getSpaceLeft() {
+            return spaceLeft;
         }
     }
 
@@ -189,6 +197,30 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
     public void appendItems(List<AsymmetricItem> newItems) {
         items.addAll(newItems);
+
+        final int lastRow = getCount() - 1;
+        final RowInfo rowInfo = itemsPerRow.get(lastRow);
+        final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
+
+        if (DEBUG)
+            Log.d(TAG, "Space left in last row: " + spaceLeftInLastRow);
+
+        // Try to add new items into the last row, if there is any space left
+        if (spaceLeftInLastRow > 0) {
+
+            for (final AsymmetricItem i : rowInfo.getItems())
+                newItems.add(0, i);
+
+            final RowInfo itemsThatFit = calculateItemsForRow(newItems);
+
+            if (!itemsThatFit.getItems().isEmpty()) {
+                for (int i = 0; i < itemsThatFit.getItems().size(); i++)
+                    newItems.remove(0);
+
+                itemsPerRow.put(lastRow, itemsThatFit);
+            }
+        }
+
         calculateItemsPerRow(getCount(), newItems);
         notifyDataSetChanged();
     }
@@ -216,25 +248,28 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                 break;
             }
 
-            if (DEBUG) {
-                for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                    itemsToAdd.remove(0);
-            }
+            for (int i = 0; i < itemsThatFit.getItems().size(); i++)
+                itemsToAdd.remove(0);
 
             itemsPerRow.put(currentRow, itemsThatFit);
             currentRow++;
         }
 
-        for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
-            Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
+        if (DEBUG) {
+            for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
+                Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
+        }
     }
 
     private RowInfo calculateItemsForRow(final List<AsymmetricItem> items) {
+        return calculateItemsForRow(items, listView.getNumColumns());
+    }
+
+    private RowInfo calculateItemsForRow(final List<AsymmetricItem> items, final float initialSpaceLeft) {
         final List<AsymmetricItem> itemsThatFit = new ArrayList<>();
-        final int numColumns = listView.getNumColumns();
         int currentItem = 0;
         int rowHeight = 1;
-        float spaceLeft = numColumns;
+        float spaceLeft = initialSpaceLeft;
 
         while (spaceLeft > 0 && currentItem < items.size()) {
             final AsymmetricItem item = items.get(currentItem++);
@@ -256,7 +291,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                     itemsThatFit.clear();
                     rowHeight = 2;
                     currentItem = 0;
-                    spaceLeft = numColumns;
+                    spaceLeft = initialSpaceLeft;
                 } else if (spaceLeft >= spaceConsumption) {
                     spaceLeft -= spaceConsumption;
                     itemsThatFit.add(item);
@@ -267,6 +302,6 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
             }
         }
 
-        return new RowInfo(rowHeight, itemsThatFit);
+        return new RowInfo(rowHeight, itemsThatFit, spaceLeft);
     }
 }
