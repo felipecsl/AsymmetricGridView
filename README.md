@@ -2,7 +2,7 @@
 
 An Android listView that implements multiple columns and variable sized elements.
 
-Still very very unstable!
+Alpha version. Use with caution. Please report issues found.
 
 ### Usage
 
@@ -38,7 +38,7 @@ protected void onCreate(Bundle savedInstanceState) {
 ![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_4_cols.png)
 ![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_5_cols.png)
 
-### Limitations
+### Caveats
 
 Currently only supports items with rowSpan = 2 and columnSpan = 2.
 In the near future it will support different layout configurations.
