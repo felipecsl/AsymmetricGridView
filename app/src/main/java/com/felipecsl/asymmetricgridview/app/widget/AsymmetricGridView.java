@@ -3,10 +3,16 @@ package com.felipecsl.asymmetricgridview.app.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ViewTreeObserver;
-import android.widget.ListView;
+import android.widget.*;
+import android.widget.ListAdapter;
 
 import com.felipecsl.asymmetricgridview.app.Utils;
+import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
+
+import java.util.List;
+import java.util.Map;
 
 public class AsymmetricGridView extends ListView {
 
@@ -36,6 +42,12 @@ public class AsymmetricGridView extends ListView {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void setAdapter(final ListAdapter adapter) {
+        super.setAdapter(adapter);
+        ((AsymmetricGridViewAdapter)adapter).calculateItemsPerRow();
     }
 
     public void setRequestedColumnWidth(final int width) {
