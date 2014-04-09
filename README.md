@@ -6,7 +6,7 @@ Still very very unstable!
 
 ### Usage
 
-```
+```xml
 <com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listView"
@@ -15,18 +15,18 @@ Still very very unstable!
 ```
 
 ```java
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        listView = (AsymmetricGridView) findViewById(R.id.listView);
-        // Choose your own preferred column width
-        listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
-        final List<AsymmetricItem> items = new ArrayList<>();
-        // initialize your items array
-        adapter = new ListAdapter(this, listView, items);
-        listView.setAdapter(adapter);
-    }
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    listView = (AsymmetricGridView) findViewById(R.id.listView);
+    // Choose your own preferred column width
+    listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
+    final List<AsymmetricItem> items = new ArrayList<>();
+    // initialize your items array
+    adapter = new ListAdapter(this, listView, items);
+    listView.setAdapter(adapter);
+}
 ```
 
 ### [Demo Youtube video](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
