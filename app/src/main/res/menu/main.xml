@@ -32,4 +32,9 @@
           android:title="Add more items"
           android:orderInCategory="100"
           app:showAsAction="never" />
+
+    <item android:id="@+id/reset_items"
+          android:title="Reset items"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
 </menu>

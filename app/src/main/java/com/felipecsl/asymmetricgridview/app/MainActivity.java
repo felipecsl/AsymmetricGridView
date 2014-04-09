@@ -74,6 +74,8 @@ public class MainActivity extends ActionBarActivity {
             listView.setAdapter(adapter);
         } else if (id == R.id.append_items) {
             listView.appendItems(get100Items());
+        } else if (id == R.id.reset_items) {
+            listView.setItems(get100Items());
         }
         return super.onOptionsItemSelected(item);
     }

@@ -195,6 +195,13 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         return childLayout;
     }
 
+    public void setItems(List<AsymmetricItem> newItems) {
+        items.clear();
+        items.addAll(newItems);
+        recalculateItemsPerRow();
+        notifyDataSetChanged();
+    }
+
     public void appendItems(List<AsymmetricItem> newItems) {
         items.addAll(newItems);
 
