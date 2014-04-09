@@ -1,5 +1,7 @@
 package com.felipecsl.asymmetricgridview.app.model;
 
+import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
+
 public class DemoItem implements AsymmetricItem {
     private int columnSpan;
     private int rowSpan;

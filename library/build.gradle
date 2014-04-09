@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'android-library'
 
 android {
     compileSdkVersion 19
@@ -24,8 +24,5 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.0'
-    compile 'com.android.support:support-v4:19.1.0'
-    compile project(path: ':library')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

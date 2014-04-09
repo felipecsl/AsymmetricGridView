@@ -1,4 +1,4 @@
-package com.felipecsl.asymmetricgridview.app.model;
+package com.felipecsl.asymmetricgridview.library.model;
 
 public interface AsymmetricItem {
     public int getColumnSpan();

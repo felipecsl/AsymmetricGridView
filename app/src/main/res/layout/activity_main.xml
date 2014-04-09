@@ -1,4 +1,4 @@
-<com.felipecsl.asymmetricgridview.app.widget.AsymmetricGridView
+<com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listView"
     android:layout_width="match_parent"

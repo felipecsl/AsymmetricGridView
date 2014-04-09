@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
+import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
+import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
+import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
 import java.util.List;
 

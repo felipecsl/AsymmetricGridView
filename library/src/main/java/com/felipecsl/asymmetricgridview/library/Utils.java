@@ -1,4 +1,4 @@
-package com.felipecsl.asymmetricgridview.app;
+package com.felipecsl.asymmetricgridview.library;
 
 import android.content.Context;
 import android.util.DisplayMetrics;

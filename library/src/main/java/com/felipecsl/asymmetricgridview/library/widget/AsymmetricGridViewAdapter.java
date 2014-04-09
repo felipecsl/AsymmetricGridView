@@ -1,4 +1,4 @@
-package com.felipecsl.asymmetricgridview.app.widget;
+package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,9 +10,9 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
-import com.felipecsl.asymmetricgridview.app.R;
-import com.felipecsl.asymmetricgridview.app.Utils;
-import com.felipecsl.asymmetricgridview.app.model.AsymmetricItem;
+import com.felipecsl.asymmetricgridview.library.R;
+import com.felipecsl.asymmetricgridview.library.Utils;
+import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,7 +204,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         itemsPerRow.clear();
         itemsCopy.addAll(items);
 
-        while(!itemsCopy.isEmpty()) {
+        while (!itemsCopy.isEmpty()) {
             final RowInfo itemsThatFit = calculateItemsForRow(itemsCopy);
 
             if (itemsThatFit.getItems().isEmpty()) {
@@ -244,8 +244,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
                     spaceLeft -= spaceConsumption;
                     itemsThatFit.add(item);
                 }
-            }
-            else {
+            } else {
                 // 2x sizes items
                 float spaceConsumption = 2;
 
