@@ -19,6 +19,7 @@ public class MainActivity extends ActionBarActivity {
 
     private AsymmetricGridView listView;
     private ListAdapter adapter;
+    private static int currentOffset = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,10 @@ public class MainActivity extends ActionBarActivity {
 
         for (int i = 0; i < 100; i++) {
             int span = Math.random() < 0.2f ? 2 : 1;
-            items.add(new DemoItem(span, span));
+            items.add(new DemoItem(span, span, currentOffset + i));
         }
+
+        currentOffset += 100;
 
         return items;
     }
@@ -75,6 +78,7 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.append_items) {
             listView.getAdapter().appendItems(get100Items());
         } else if (id == R.id.reset_items) {
+            currentOffset = 0;
             listView.getAdapter().setItems(get100Items());
         }
         return super.onOptionsItemSelected(item);
