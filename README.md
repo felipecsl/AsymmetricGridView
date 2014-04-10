@@ -61,6 +61,10 @@ protected void onCreate(Bundle savedInstanceState) {
 Currently only supports items with rowSpan = 2 and columnSpan = 2.
 In the near future it will support different layout configurations.
 
+It will work best if you don't have too many items with different sizes. Ideally less
+than 20% of your items are of special sizes, otherwise the library may not find the best
+way to accommodate all the items without leaving a lot of empty space behind.
+
 ### Contributing
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet

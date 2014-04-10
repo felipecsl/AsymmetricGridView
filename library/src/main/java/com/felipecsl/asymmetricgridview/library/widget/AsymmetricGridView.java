@@ -69,11 +69,11 @@ public class AsymmetricGridView extends ListView {
         determineColumns();
     }
 
-    public void appendItems(final List<AsymmetricItem> items) {
+    public void appendItems(final List<? extends AsymmetricItem> items) {
         getAdapter().appendItems(items);
     }
 
-    public void setItems(final List<AsymmetricItem> items) {
+    public void setItems(final List<? extends AsymmetricItem> items) {
         getAdapter().setItems(items);
     }
 

@@ -19,23 +19,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricItem> {
+public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends ArrayAdapter<T> {
 
-    private static class RowInfo {
+    private class RowInfo {
 
-        private final List<AsymmetricItem> items;
+        private final List<T> items;
         private final int rowHeight;
         private final float spaceLeft;
 
         public RowInfo(final int rowHeight,
-                       final List<AsymmetricItem> items,
+                       final List<T> items,
                        final float spaceLeft) {
             this.rowHeight = rowHeight;
             this.items = items;
             this.spaceLeft = spaceLeft;
         }
 
-        public List<AsymmetricItem> getItems() {
+        public List<T> getItems() {
             return items;
         }
 
@@ -52,12 +52,12 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
     private static final boolean DEBUG = true;
     protected final AsymmetricGridView listView;
     private final Context context;
-    private final List<AsymmetricItem> items;
+    private final List<T> items;
     private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
 
     protected AsymmetricGridViewAdapter(final Context context,
                                         final AsymmetricGridView listView,
-                                        final List<AsymmetricItem> items) {
+                                        final List<T> items) {
 
         super(context, 0, items);
 
@@ -195,14 +195,14 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         return childLayout;
     }
 
-    public void setItems(List<AsymmetricItem> newItems) {
+    public void setItems(List<T> newItems) {
         items.clear();
         items.addAll(newItems);
         recalculateItemsPerRow();
         notifyDataSetChanged();
     }
 
-    public void appendItems(List<AsymmetricItem> newItems) {
+    public void appendItems(List<T> newItems) {
         items.addAll(newItems);
 
         final int lastRow = getCount() - 1;
@@ -215,7 +215,7 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         // Try to add new items into the last row, if there is any space left
         if (spaceLeftInLastRow > 0) {
 
-            for (final AsymmetricItem i : rowInfo.getItems())
+            for (final T i : rowInfo.getItems())
                 newItems.add(0, i);
 
             final RowInfo itemsThatFit = calculateItemsForRow(newItems);
@@ -240,12 +240,12 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
 
     public void recalculateItemsPerRow() {
         itemsPerRow.clear();
-        final List<AsymmetricItem> itemsToAdd = new ArrayList<>();
+        final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
         calculateItemsPerRow(0, itemsToAdd);
     }
 
-    private void calculateItemsPerRow(int currentRow, List<AsymmetricItem> itemsToAdd) {
+    private void calculateItemsPerRow(int currentRow, List<T> itemsToAdd) {
         while (!itemsToAdd.isEmpty()) {
             final RowInfo itemsThatFit = calculateItemsForRow(itemsToAdd);
 
@@ -268,18 +268,18 @@ public abstract class AsymmetricGridViewAdapter extends ArrayAdapter<AsymmetricI
         }
     }
 
-    private RowInfo calculateItemsForRow(final List<AsymmetricItem> items) {
+    private RowInfo calculateItemsForRow(final List<T> items) {
         return calculateItemsForRow(items, listView.getNumColumns());
     }
 
-    private RowInfo calculateItemsForRow(final List<AsymmetricItem> items, final float initialSpaceLeft) {
-        final List<AsymmetricItem> itemsThatFit = new ArrayList<>();
+    private RowInfo calculateItemsForRow(final List<T> items, final float initialSpaceLeft) {
+        final List<T> itemsThatFit = new ArrayList<>();
         int currentItem = 0;
         int rowHeight = 1;
         float spaceLeft = initialSpaceLeft;
 
         while (spaceLeft > 0 && currentItem < items.size()) {
-            final AsymmetricItem item = items.get(currentItem++);
+            final T item = items.get(currentItem++);
 
             if (item.getColumnSpan() == 1) {
                 // 1x sized items

@@ -32,11 +32,11 @@ public class MainActivity extends ActionBarActivity {
         listView.setAdapter(adapter);
     }
 
-    private static List<AsymmetricItem> get100Items() {
-        final List<AsymmetricItem> items = new ArrayList<>();
+    private static List<DemoItem> get100Items() {
+        final List<DemoItem> items = new ArrayList<>();
 
         for (int i = 0; i < 100; i++) {
-            int span = i % 10 == 0 ? 2 : 1;
+            int span = Math.random() < 0.2f ? 2 : 1;
             items.add(new DemoItem(span, span));
         }
 

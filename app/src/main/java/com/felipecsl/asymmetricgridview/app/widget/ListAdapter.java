@@ -8,15 +8,16 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
 import java.util.List;
 
-public class ListAdapter extends AsymmetricGridViewAdapter {
+public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
 
-    public ListAdapter(final Context context, final AsymmetricGridView listView, final List<AsymmetricItem> items) {
+    public ListAdapter(final Context context, final AsymmetricGridView listView, final List<DemoItem> items) {
         super(context, listView, items);
     }
 
