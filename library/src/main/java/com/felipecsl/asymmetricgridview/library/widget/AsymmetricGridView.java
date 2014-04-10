@@ -22,6 +22,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     private final int requestedHorizontalSpacing;
     private final int requestedVerticalSpacing;
     private int requestedColumnWidth;
+    private int requestedColumnCount;
     private AsymmetricGridViewAdapter<T> gridAdapter;
 
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
@@ -59,6 +60,10 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
         requestedColumnWidth = width;
     }
 
+    public void setRequestedColumnCount(int requestedColumnCount) {
+        this.requestedColumnCount = requestedColumnCount;
+    }
+
     public int getRequestedHorizontalSpacing() {
         return requestedHorizontalSpacing;
     }
@@ -79,7 +84,9 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
         if (requestedColumnWidth > 0) {
             numColumns = (availableSpace + requestedHorizontalSpacing) /
-                    (requestedColumnWidth + requestedHorizontalSpacing);
+                         (requestedColumnWidth + requestedHorizontalSpacing);
+        } else if (requestedColumnCount > 0) {
+            numColumns = requestedColumnCount;
         } else {
             // Default to 2 columns
             numColumns = DEFAULT_COLUMN_COUNT;
