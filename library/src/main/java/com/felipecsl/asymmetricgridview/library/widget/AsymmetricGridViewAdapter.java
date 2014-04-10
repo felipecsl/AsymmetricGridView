@@ -49,15 +49,15 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
     }
 
     private static final String TAG = "AsymmetricGridViewAdapter";
-    private static final boolean DEBUG = true;
+    protected static final boolean DEBUG = true;
     protected final AsymmetricGridView listView;
-    private final Context context;
-    private final List<T> items;
+    protected final Context context;
+    protected final List<T> items;
     private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
 
-    protected AsymmetricGridViewAdapter(final Context context,
-                                        final AsymmetricGridView listView,
-                                        final List<T> items) {
+    public AsymmetricGridViewAdapter(final Context context,
+                                     final AsymmetricGridView listView,
+                                     final List<T> items) {
 
         super(context, 0, items);
 
