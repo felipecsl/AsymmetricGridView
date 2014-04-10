@@ -19,13 +19,14 @@ public class MainActivity extends ActionBarActivity {
 
     private AsymmetricGridView listView;
     private ListAdapter adapter;
+    private static int currentOffset = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (AsymmetricGridView) findViewById(R.id.listView);
-        listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
+        listView.setRequestedColumnCount(2);
 
         adapter = new ListAdapter(this, listView, get100Items());
 
@@ -37,8 +38,10 @@ public class MainActivity extends ActionBarActivity {
 
         for (int i = 0; i < 100; i++) {
             int span = Math.random() < 0.2f ? 2 : 1;
-            items.add(new DemoItem(span, span));
+            items.add(new DemoItem(span, span, currentOffset + i));
         }
+
+        currentOffset += 100;
 
         return items;
     }
@@ -53,28 +56,29 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.one_column) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 240));
+            listView.setRequestedColumnCount(1);
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.two_columnns) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
+            listView.setRequestedColumnCount(2);
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.three_columns) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 90));
+            listView.setRequestedColumnCount(3);
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.four_columns) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 70));
+            listView.setRequestedColumnCount(4);
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.five_columns) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 60));
+            listView.setRequestedColumnCount(5);
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.append_items) {
             listView.getAdapter().appendItems(get100Items());
         } else if (id == R.id.reset_items) {
+            currentOffset = 0;
             listView.getAdapter().setItems(get100Items());
         }
         return super.onOptionsItemSelected(item);

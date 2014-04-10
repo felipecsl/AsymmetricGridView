@@ -25,7 +25,7 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
     public View getActualView(final int position, final View convertView, final ViewGroup parent) {
         TextView v;
 
-        AsymmetricItem item = getItem(position);
+        DemoItem item = getItem(position);
 
         if (convertView == null) {
             v = new TextView(getContext());
@@ -39,7 +39,7 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
                 getRowWidth(item),
                 getRowHeight(item)));
 
-        v.setText(String.valueOf(position));
+        v.setText(String.valueOf(item.getPosition()));
 
         return v;
     }

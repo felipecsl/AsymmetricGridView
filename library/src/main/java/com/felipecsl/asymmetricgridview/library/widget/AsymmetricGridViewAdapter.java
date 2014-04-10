@@ -222,7 +222,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
 
             if (!itemsThatFit.getItems().isEmpty()) {
                 for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                    newItems.remove(0);
+                    newItems.remove(itemsThatFit.getItems().get(i));
 
                 itemsPerRow.put(lastRow, itemsThatFit);
             }
@@ -236,6 +236,10 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
     public int getCount() {
         // Returns the row count for ListView display purposes
         return itemsPerRow.size();
+    }
+
+    public List<T> getItems() {
+        return items;
     }
 
     public void recalculateItemsPerRow() {
@@ -256,7 +260,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
             }
 
             for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                itemsToAdd.remove(0);
+                itemsToAdd.remove(itemsThatFit.getItems().get(i));
 
             itemsPerRow.put(currentRow, itemsThatFit);
             currentRow++;
@@ -302,7 +306,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
                 } else if (spaceLeft >= spaceConsumption) {
                     spaceLeft -= spaceConsumption;
                     itemsThatFit.add(item);
-                } else {
+                } else if (currentItem == items.size()) {
                     // no more space left in this row
                     break;
                 }
