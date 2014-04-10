@@ -207,27 +207,29 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
 
         final int lastRow = getCount() - 1;
         final RowInfo rowInfo = itemsPerRow.get(lastRow);
-        final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
 
-        if (DEBUG)
-            Log.d(TAG, "Space left in last row: " + spaceLeftInLastRow);
+        if (rowInfo != null) {
+            final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
 
-        // Try to add new items into the last row, if there is any space left
-        if (spaceLeftInLastRow > 0) {
+            if (DEBUG)
+                Log.d(TAG, "Space left in last row: " + spaceLeftInLastRow);
 
-            for (final T i : rowInfo.getItems())
-                newItems.add(0, i);
+            // Try to add new items into the last row, if there is any space left
+            if (spaceLeftInLastRow > 0) {
 
-            final RowInfo itemsThatFit = calculateItemsForRow(newItems);
+                for (final T i : rowInfo.getItems())
+                    newItems.add(0, i);
 
-            if (!itemsThatFit.getItems().isEmpty()) {
-                for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                    newItems.remove(itemsThatFit.getItems().get(i));
+                final RowInfo itemsThatFit = calculateItemsForRow(newItems);
 
-                itemsPerRow.put(lastRow, itemsThatFit);
+                if (!itemsThatFit.getItems().isEmpty()) {
+                    for (int i = 0; i < itemsThatFit.getItems().size(); i++)
+                        newItems.remove(itemsThatFit.getItems().get(i));
+
+                    itemsPerRow.put(lastRow, itemsThatFit);
+                }
             }
         }
-
         calculateItemsPerRow(getCount(), newItems);
         notifyDataSetChanged();
     }
