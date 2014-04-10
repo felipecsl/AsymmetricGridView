@@ -6,6 +6,22 @@ Alpha version. Use with caution. Please report issues found.
 
 ### Usage
 
+In your ``build.gradle`` file:
+
+```groovy
+repositories {
+    maven { url 'https://raw.github.com/luciofm/m2repository/master' }
+    // ...
+}
+
+dependencies {
+    // ...
+    compile 'com.felipecsl:asymmetricgridview:1.0.0-SNAPSHOT'
+}
+```
+
+In your layout xml:
+
 ```xml
 <com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,6 +29,8 @@ Alpha version. Use with caution. Please report issues found.
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
 ```
+
+In your activity class:
 
 ```java
 @Override
