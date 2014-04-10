@@ -12,7 +12,7 @@ import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 
 import java.util.List;
 
-public class AsymmetricGridView extends ListView {
+public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
     private static final int DEFAULT_COLUMN_COUNT = 2;
     private static final String TAG = "MultiColumnListView";
@@ -22,6 +22,7 @@ public class AsymmetricGridView extends ListView {
     private final int requestedHorizontalSpacing;
     private final int requestedVerticalSpacing;
     private int requestedColumnWidth;
+    private AsymmetricGridViewAdapter<T> gridAdapter;
 
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -31,24 +32,27 @@ public class AsymmetricGridView extends ListView {
         requestedVerticalSpacing = defaultPadding;
         padding = new Rect(defaultPadding, defaultPadding, defaultPadding, defaultPadding);
 
-        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                getViewTreeObserver().removeOnPreDrawListener(this);
-                determineColumns();
-                ((AsymmetricGridViewAdapter) getAdapter()).notifyDataSetChanged();
-                return false;
-            }
-        });
+        final ViewTreeObserver vto = getViewTreeObserver();
+        if (vto != null)
+            vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    getViewTreeObserver().removeOnPreDrawListener(this);
+                    determineColumns();
+                    gridAdapter.notifyDataSetChanged();
+                    return false;
+                }
+            });
     }
 
-    public void setAdapter(final AsymmetricGridViewAdapter adapter) {
+    public void setAdapter(final AsymmetricGridViewAdapter<T> adapter) {
+        gridAdapter = adapter;
         super.setAdapter(adapter);
         adapter.recalculateItemsPerRow();
     }
 
-    public AsymmetricGridViewAdapter getAdapter() {
-        return (AsymmetricGridViewAdapter) super.getAdapter();
+    public AsymmetricGridViewAdapter<T> getAdapter() {
+        return gridAdapter;
     }
 
     public void setRequestedColumnWidth(final int width) {
@@ -67,14 +71,6 @@ public class AsymmetricGridView extends ListView {
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         determineColumns();
-    }
-
-    public void appendItems(final List<? extends AsymmetricItem> items) {
-        getAdapter().appendItems(items);
-    }
-
-    public void setItems(final List<? extends AsymmetricItem> items) {
-        getAdapter().setItems(items);
     }
 
     public int determineColumns() {

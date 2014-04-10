@@ -47,6 +47,16 @@ protected void onCreate(Bundle savedInstanceState) {
 }
 ```
 
+Supports resetting and appending more elements into the adapter:
+
+```java
+// appending more items at the end of the adapter
+listView.getAdapter().appendItems(moreItems);
+
+// resetting the adapter items
+listView.getAdapter().setItems(items);
+```
+
 ### [Demo Youtube video](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
 
 ### Screenshots:
