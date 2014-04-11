@@ -14,7 +14,6 @@ import com.felipecsl.asymmetricgridview.library.R;
 import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -150,6 +149,11 @@ public abstract class AsymmetricGridViewAdapter<T
             } else {
                 break;
             }
+        }
+
+        if (position % 20 == 0 && listView.isDebugging()) {
+            Log.d(TAG, linearLayoutPool.getStats("LinearLayout"));
+            Log.d(TAG, viewPool.getStats("Views"));
         }
 
         return layout;
@@ -355,8 +359,10 @@ public abstract class AsymmetricGridViewAdapter<T
     static class Pool<T> {
         Stack<T> stack = new Stack<>();
         PoolObjectFactory<T> factory = null;
+        PoolStats stats;
 
         Pool() {
+            stats = new PoolStats();
         }
 
         Pool(PoolObjectFactory<T> factory) {
@@ -364,17 +370,47 @@ public abstract class AsymmetricGridViewAdapter<T
         }
 
         T get() {
-            if (stack.size() > 0)
+            if (stack.size() > 0) {
+                stats.hits++;
+                stats.size--;
                 return stack.pop();
-            return factory != null ? factory.createObject() : null;
+            }
+
+            stats.misses++;
+
+            T object = factory != null ? factory.createObject() : null;
+
+            if (object != null) {
+                stats.created++;
+            }
+
+            return object;
         }
 
         void put(T object) {
             stack.push(object);
+            stats.size++;
         }
 
         void clear() {
+            stats = new PoolStats();
             stack.clear();
+        }
+
+        String getStats(String name) {
+            return stats.getStats(name);
+        }
+    }
+
+    static class PoolStats {
+        int size = 0;
+        int hits = 0;
+        int misses = 0;
+        int created = 0;
+
+        String getStats(String name) {
+            return String.format("%s: size %d, hits %d, misses %d, created %d", name, size, hits,
+                                 misses, created);
         }
     }
 
