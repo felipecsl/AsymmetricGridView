@@ -36,8 +36,6 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
         requestedVerticalSpacing = defaultPadding;
         padding = new Rect(defaultPadding, defaultPadding, defaultPadding, defaultPadding);
 
-        setItemsCanFocus(true);
-
         final ViewTreeObserver vto = getViewTreeObserver();
         if (vto != null)
             vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
