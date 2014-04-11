@@ -159,7 +159,7 @@ public abstract class AsymmetricGridViewAdapter<T
             }
         }
 
-        if (position % 20 == 0 && listView.isDebugging()) {
+        if (listView.isDebugging() && position % 20 == 0) {
             Log.d(TAG, linearLayoutPool.getStats("LinearLayout"));
             Log.d(TAG, viewPool.getStats("Views"));
         }
