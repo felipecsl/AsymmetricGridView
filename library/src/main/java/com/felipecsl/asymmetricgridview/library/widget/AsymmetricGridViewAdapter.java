@@ -350,7 +350,6 @@ public abstract class AsymmetricGridViewAdapter<T
         @Override
         protected List<RowInfo> doInBackground(List<T>... params) {
             List<T> items = params[0];
-            Response response = new Response();
 
             return calculateItemsPerRow(0, items);
         }
@@ -380,16 +379,6 @@ public abstract class AsymmetricGridViewAdapter<T
             }
 
             return rows;
-        }
-    }
-
-    public class Response {
-        List<RowInfo> rows;
-        List<T> remaining;
-
-        public Response() {
-            rows = new ArrayList<>();
-            remaining = new ArrayList<>();
         }
     }
 
