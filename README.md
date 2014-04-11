@@ -57,6 +57,8 @@ listView.getAdapter().appendItems(moreItems);
 listView.getAdapter().setItems(items);
 ```
 
+Works with Android 2.3.x and above.
+
 ### [Demo Youtube video](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
 
 ### Screenshots:
