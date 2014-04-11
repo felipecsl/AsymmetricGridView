@@ -77,17 +77,25 @@ public abstract class AsymmetricGridViewAdapter<T
     public abstract View getActualView(final int position, final View convertView, final ViewGroup parent);
 
     protected int getRowHeight(final AsymmetricItem item) {
-        final int rowHeight = listView.getColumnWidth() * item.getRowSpan();
+        return getRowHeight(item.getRowSpan());
+    }
+
+    protected int getRowHeight(int rowSpan) {
+        final int rowHeight = listView.getColumnWidth() * rowSpan;
         // when the item spans multiple rows, we need to account for the vertical padding
         // and add that to the total final height
-        return rowHeight + ((item.getRowSpan() - 1) * listView.getRequestedVerticalSpacing());
+        return rowHeight + ((rowSpan) * listView.getRequestedVerticalSpacing());
     }
 
     protected int getRowWidth(final AsymmetricItem item) {
-        final int rowWidth = listView.getColumnWidth() * item.getColumnSpan();
+        return getRowWidth(item.getColumnSpan());
+    }
+
+    protected int getRowWidth(int columnSpan) {
+        final int rowWidth = listView.getColumnWidth() * columnSpan;
         // when the item spans multiple columns, we need to account for the horizontal padding
         // and add that to the total final width
-        return Math.min(rowWidth + ((item.getColumnSpan() - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
+        return Math.min(rowWidth + ((columnSpan - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
     }
 
     @Override
