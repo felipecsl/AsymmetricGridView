@@ -257,14 +257,7 @@ public abstract class AsymmetricGridViewAdapter<T
             }
         }
 
-        new ProcessRowsTask() {
-            @Override
-            protected void onPostExecute(List<RowInfo> rows) {
-                for (RowInfo row : rows)
-                    itemsPerRow.put(getCount(), row);
-                notifyDataSetChanged();
-            }
-        }.executeSerially(newItems);
+        new ProcessRowsTask().executeSerially(newItems);
     }
 
     @Override
@@ -292,14 +285,7 @@ public abstract class AsymmetricGridViewAdapter<T
         final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
         //calculateItemsPerRow(0, itemsToAdd);
-        new ProcessRowsTask() {
-            @Override
-            protected void onPostExecute(List<RowInfo> rows) {
-                for (RowInfo row : rows)
-                    itemsPerRow.put(getCount(), row);
-                notifyDataSetChanged();
-            }
-        }.executeSerially(itemsToAdd);
+        new ProcessRowsTask().executeSerially(itemsToAdd);
     }
 
     private RowInfo calculateItemsForRow(final List<T> items) {
@@ -352,6 +338,13 @@ public abstract class AsymmetricGridViewAdapter<T
             List<T> items = params[0];
 
             return calculateItemsPerRow(0, items);
+        }
+
+        @Override
+        protected void onPostExecute(List<RowInfo> rows) {
+            for (RowInfo row : rows)
+                itemsPerRow.put(getCount(), row);
+            notifyDataSetChanged();
         }
 
         private List<RowInfo> calculateItemsPerRow(int currentRow, List<T> itemsToAdd) {
