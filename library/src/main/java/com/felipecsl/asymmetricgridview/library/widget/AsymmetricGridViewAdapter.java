@@ -49,7 +49,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
     }
 
     private static final String TAG = "AsymmetricGridViewAdapter";
-    protected static final boolean DEBUG = true;
+    protected static final boolean DEBUG = false;
     protected final AsymmetricGridView listView;
     protected final Context context;
     protected final List<T> items;
@@ -240,10 +240,6 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
         return itemsPerRow.size();
     }
 
-    public List<T> getItems() {
-        return items;
-    }
-
     public void recalculateItemsPerRow() {
         itemsPerRow.clear();
         final List<T> itemsToAdd = new ArrayList<>();
@@ -253,18 +249,19 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
 
     private void calculateItemsPerRow(int currentRow, List<T> itemsToAdd) {
         while (!itemsToAdd.isEmpty()) {
-            final RowInfo itemsThatFit = calculateItemsForRow(itemsToAdd);
+            final RowInfo stuffThatFit = calculateItemsForRow(itemsToAdd);
 
-            if (itemsThatFit.getItems().isEmpty()) {
+            final List<T> itemsThatFit = stuffThatFit.getItems();
+            if (itemsThatFit.isEmpty()) {
                 // we can't fit a single item inside a row.
                 // bail out.
                 break;
             }
 
-            for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                itemsToAdd.remove(itemsThatFit.getItems().get(i));
+            for (int i = 0; i < itemsThatFit.size(); i++)
+                itemsToAdd.remove(itemsThatFit.get(i));
 
-            itemsPerRow.put(currentRow, itemsThatFit);
+            itemsPerRow.put(currentRow, stuffThatFit);
             currentRow++;
         }
 
