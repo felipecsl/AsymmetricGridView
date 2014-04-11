@@ -53,7 +53,6 @@ public abstract class AsymmetricGridViewAdapter<T
     }
 
     private static final String TAG = "AsymmetricGridViewAdapter";
-    protected static final boolean DEBUG = false;
     protected final AsymmetricGridView listView;
     protected final Context context;
     protected final List<T> items;
@@ -158,8 +157,8 @@ public abstract class AsymmetricGridViewAdapter<T
 
         if (convertView == null) {
             layout = new LinearLayout(context);
-            if (DEBUG)
-                layout.setBackgroundColor(Color.parseColor("#00ff00"));
+            if (listView.isDebugging())
+                layout.setBackgroundColor(Color.parseColor("#83F27B"));
 
             if (Build.VERSION.SDK_INT >= 11) {
                 layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -191,8 +190,8 @@ public abstract class AsymmetricGridViewAdapter<T
             childLayout = linearLayoutPool.get();
             childLayout.setOrientation(LinearLayout.VERTICAL);
 
-            if (DEBUG)
-                childLayout.setBackgroundColor(Color.parseColor("#0000ff"));
+            if (listView.isDebugging())
+                childLayout.setBackgroundColor(Color.parseColor("#837BF2"));
 
             if (Build.VERSION.SDK_INT >= 11) {
                 childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -225,7 +224,7 @@ public abstract class AsymmetricGridViewAdapter<T
         if (rowInfo != null) {
             final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
 
-            if (DEBUG)
+            if (listView.isDebugging())
                 Log.d(TAG, "Space left in last row: " + spaceLeftInLastRow);
 
             // Try to add new items into the last row, if there is any space left
@@ -267,6 +266,9 @@ public abstract class AsymmetricGridViewAdapter<T
     }
 
     public void recalculateItemsPerRow() {
+        linearLayoutPool.clear();
+        viewPool.clear();
+
         itemsPerRow.clear();
         final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
@@ -291,7 +293,7 @@ public abstract class AsymmetricGridViewAdapter<T
             currentRow++;
         }
 
-        if (DEBUG) {
+        if (listView.isDebugging()) {
             for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
                 Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
         }
