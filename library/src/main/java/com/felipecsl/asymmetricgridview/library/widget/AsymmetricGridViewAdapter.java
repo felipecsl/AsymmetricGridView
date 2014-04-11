@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public abstract class AsymmetricGridViewAdapter<T
         extends AsymmetricItem> extends ArrayAdapter<T>
@@ -51,11 +52,13 @@ public abstract class AsymmetricGridViewAdapter<T
     }
 
     private static final String TAG = "AsymmetricGridViewAdapter";
-    protected static final boolean DEBUG = false;
     protected final AsymmetricGridView listView;
     protected final Context context;
     protected final List<T> items;
     private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
+
+    Pool<LinearLayout> linearLayoutPool;
+    Pool<View> viewPool;
 
     public AsymmetricGridViewAdapter(final Context context,
                                      final AsymmetricGridView listView,
@@ -66,27 +69,38 @@ public abstract class AsymmetricGridViewAdapter<T
         this.items = items;
         this.context = context;
         this.listView = listView;
+
+        linearLayoutPool = new Pool<>(linearLayoutPoolObjectFactory);
+        viewPool = new Pool<>();
     }
 
     public abstract View getActualView(final int position, final View convertView, final ViewGroup parent);
 
     protected int getRowHeight(final AsymmetricItem item) {
-        final int rowHeight = listView.getColumnWidth() * item.getRowSpan();
+        return getRowHeight(item.getRowSpan());
+    }
+
+    protected int getRowHeight(int rowSpan) {
+        final int rowHeight = listView.getColumnWidth() * rowSpan;
         // when the item spans multiple rows, we need to account for the vertical padding
         // and add that to the total final height
-        return rowHeight + ((item.getRowSpan() - 1) * listView.getRequestedVerticalSpacing());
+        return rowHeight + ((rowSpan) * listView.getRequestedVerticalSpacing());
     }
 
     protected int getRowWidth(final AsymmetricItem item) {
-        final int rowWidth = listView.getColumnWidth() * item.getColumnSpan();
+        return getRowWidth(item.getColumnSpan());
+    }
+
+    protected int getRowWidth(int columnSpan) {
+        final int rowWidth = listView.getColumnWidth() * columnSpan;
         // when the item spans multiple columns, we need to account for the horizontal padding
         // and add that to the total final width
-        return Math.min(rowWidth + ((item.getColumnSpan() - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
+        return Math.min(rowWidth + ((columnSpan - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
     }
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
-        LinearLayout layout = findOrInitializeLayout(convertView);
+        LinearLayout layout = findOrInitializeLayout(convertView, position);
 
         final RowInfo rowInfo = itemsPerRow.get(position);
         final List<AsymmetricItem> rowItems = new ArrayList<>();
@@ -122,9 +136,10 @@ public abstract class AsymmetricGridViewAdapter<T
             if (spaceLeftInColumn >= currentItem.getRowSpan()) {
                 rowItems.remove(currentItem);
 
+                int index = items.indexOf(currentItem);
                 final LinearLayout childLayout = findOrInitializeChildLayout(layout, columnIndex);
-                final View childConvertView = childLayout.getChildAt(currentColumnIndex);
-                final View v = getActualView(items.indexOf(currentItem), childConvertView, parent);
+                final View childConvertView = viewPool.get();
+                final View v = getActualView(index, childConvertView, parent);
                 v.setTag(currentItem);
                 v.setOnClickListener(this);
 
@@ -132,8 +147,10 @@ public abstract class AsymmetricGridViewAdapter<T
                 spaceLeftInColumn -= currentItem.getRowSpan();
                 currentIndex = 0;
 
-                if (childConvertView == null)
-                    childLayout.addView(v);
+                v.setLayoutParams(new LinearLayout.LayoutParams(getRowWidth(currentItem),
+                                                                getRowHeight(currentItem)));
+
+                childLayout.addView(v);
             } else if (currentIndex < rowItems.size() - 1) {
                 // Try again with next item
                 currentIndex++;
@@ -142,31 +159,38 @@ public abstract class AsymmetricGridViewAdapter<T
             }
         }
 
+        if (listView.isDebugging() && position % 20 == 0) {
+            Log.d(TAG, linearLayoutPool.getStats("LinearLayout"));
+            Log.d(TAG, viewPool.getStats("Views"));
+        }
+
         return layout;
     }
 
-    private LinearLayout findOrInitializeLayout(final View convertView) {
+    private LinearLayout findOrInitializeLayout(final View convertView, int position) {
         LinearLayout layout;
 
         if (convertView == null) {
             layout = new LinearLayout(context);
-            if (DEBUG)
-                layout.setBackgroundColor(Color.parseColor("#00ff00"));
+            if (listView.isDebugging())
+                layout.setBackgroundColor(Color.parseColor("#83F27B"));
 
             if (Build.VERSION.SDK_INT >= 11) {
                 layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
                 layout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_horizontal));
             }
 
-            layout.setLayoutParams(new AbsListView.LayoutParams(
-                    AbsListView.LayoutParams.MATCH_PARENT,
-                    AbsListView.LayoutParams.WRAP_CONTENT));
+            layout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+                                                                AbsListView.LayoutParams.WRAP_CONTENT));
         } else
             layout = (LinearLayout) convertView;
 
         // Clear all layout children before starting
         for (int j = 0; j < layout.getChildCount(); j++) {
             LinearLayout tempChild = (LinearLayout) layout.getChildAt(j);
+            linearLayoutPool.put(tempChild);
+            for (int k = 0; k < tempChild.getChildCount(); k++)
+                viewPool.put(tempChild.getChildAt(k));
             tempChild.removeAllViews();
         }
         layout.removeAllViews();
@@ -178,21 +202,19 @@ public abstract class AsymmetricGridViewAdapter<T
         LinearLayout childLayout = (LinearLayout) parentLayout.getChildAt(childIndex);
 
         if (childLayout == null) {
-            childLayout = new LinearLayout(context);
+            childLayout = linearLayoutPool.get();
             childLayout.setOrientation(LinearLayout.VERTICAL);
 
-            if (DEBUG)
-                childLayout.setBackgroundColor(Color.parseColor("#0000ff"));
+            if (listView.isDebugging())
+                childLayout.setBackgroundColor(Color.parseColor("#837BF2"));
 
             if (Build.VERSION.SDK_INT >= 11) {
                 childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
                 childLayout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_vertical));
             }
 
-            childLayout.setLayoutParams(new AbsListView.LayoutParams(
-                    AbsListView.LayoutParams.WRAP_CONTENT,
-                    AbsListView.LayoutParams.MATCH_PARENT));
-
+            childLayout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
+                                                                     AbsListView.LayoutParams.MATCH_PARENT));
             parentLayout.addView(childLayout);
         }
 
@@ -200,6 +222,8 @@ public abstract class AsymmetricGridViewAdapter<T
     }
 
     public void setItems(List<T> newItems) {
+        linearLayoutPool.clear();
+        viewPool.clear();
         items.clear();
         items.addAll(newItems);
         recalculateItemsPerRow();
@@ -215,7 +239,7 @@ public abstract class AsymmetricGridViewAdapter<T
         if (rowInfo != null) {
             final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
 
-            if (DEBUG)
+            if (listView.isDebugging())
                 Log.d(TAG, "Space left in last row: " + spaceLeftInLastRow);
 
             // Try to add new items into the last row, if there is any space left
@@ -246,12 +270,20 @@ public abstract class AsymmetricGridViewAdapter<T
     }
 
     @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
+    @Override
     public int getCount() {
         // Returns the row count for ListView display purposes
         return itemsPerRow.size();
     }
 
     public void recalculateItemsPerRow() {
+        linearLayoutPool.clear();
+        viewPool.clear();
+
         itemsPerRow.clear();
         final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
@@ -276,7 +308,7 @@ public abstract class AsymmetricGridViewAdapter<T
             currentRow++;
         }
 
-        if (DEBUG) {
+        if (listView.isDebugging()) {
             for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
                 Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
         }
@@ -323,5 +355,74 @@ public abstract class AsymmetricGridViewAdapter<T
         }
 
         return new RowInfo(rowHeight, itemsThatFit, spaceLeft);
+    }
+
+    PoolObjectFactory<LinearLayout> linearLayoutPoolObjectFactory = new PoolObjectFactory<LinearLayout>() {
+        @Override
+        public LinearLayout createObject() {
+            return new LinearLayout(context);
+        }
+    };
+
+    static class Pool<T> {
+        Stack<T> stack = new Stack<>();
+        PoolObjectFactory<T> factory = null;
+        PoolStats stats;
+
+        Pool() {
+            stats = new PoolStats();
+        }
+
+        Pool(PoolObjectFactory<T> factory) {
+            this.factory = factory;
+        }
+
+        T get() {
+            if (stack.size() > 0) {
+                stats.hits++;
+                stats.size--;
+                return stack.pop();
+            }
+
+            stats.misses++;
+
+            T object = factory != null ? factory.createObject() : null;
+
+            if (object != null) {
+                stats.created++;
+            }
+
+            return object;
+        }
+
+        void put(T object) {
+            stack.push(object);
+            stats.size++;
+        }
+
+        void clear() {
+            stats = new PoolStats();
+            stack.clear();
+        }
+
+        String getStats(String name) {
+            return stats.getStats(name);
+        }
+    }
+
+    static class PoolStats {
+        int size = 0;
+        int hits = 0;
+        int misses = 0;
+        int created = 0;
+
+        String getStats(String name) {
+            return String.format("%s: size %d, hits %d, misses %d, created %d", name, size, hits,
+                                 misses, created);
+        }
+    }
+
+    public interface PoolObjectFactory<T> {
+        public T createObject();
     }
 }

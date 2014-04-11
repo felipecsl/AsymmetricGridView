@@ -29,7 +29,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (AsymmetricGridView) findViewById(R.id.listView);
-        listView.setRequestedColumnCount(2);
 
         adapter = new ListAdapter(this, listView, get100Items());
 
@@ -86,6 +85,15 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             listView.getAdapter().setItems(get100Items());
         } else if (id == R.id.reordering) {
             listView.setAllowReordering(!listView.isAllowReordering());
+        } else if (id == R.id.debugging) {
+            int index = listView.getFirstVisiblePosition();
+            View v = listView.getChildAt(0);
+            int top = (v == null) ? 0 : v.getTop();
+
+            listView.setDebugging(!listView.isDebugging());
+            listView.setAdapter(adapter);
+
+            listView.setSelectionFromTop(index, top);
         }
         return super.onOptionsItemSelected(item);
     }

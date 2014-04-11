@@ -22,6 +22,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     private int requestedColumnWidth;
     private int requestedColumnCount;
     private boolean allowReordering;
+    private boolean debugging = false;
     private AsymmetricGridViewAdapter<T> gridAdapter;
     private OnItemClickListener onItemClickListener;
 
@@ -132,5 +133,13 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
             gridAdapter.recalculateItemsPerRow();
             gridAdapter.notifyDataSetChanged();
         }
+    }
+
+    public boolean isDebugging() {
+        return debugging;
+    }
+
+    public void setDebugging(boolean debugging) {
+        this.debugging = debugging;
     }
 }

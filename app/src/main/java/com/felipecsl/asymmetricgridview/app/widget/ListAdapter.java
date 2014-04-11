@@ -2,7 +2,7 @@ package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
@@ -25,9 +24,17 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
     }
 
     @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d(getClass().getName(), "getView(" + position + ", " + convertView + ")");
+        return super.getView(position, convertView, parent);
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public View getActualView(final int position, final View convertView, final ViewGroup parent) {
         TextView v;
+
+        Log.d(getClass().getName(), "getActualView(" + position + ", " + convertView + ")");
 
         DemoItem item = getItem(position);
 
@@ -40,10 +47,6 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
             v.setId(item.getPosition());
         } else
             v = (TextView) convertView;
-
-        v.setLayoutParams(new LinearLayout.LayoutParams(
-                getRowWidth(item),
-                getRowHeight(item)));
 
         v.setText(String.valueOf(item.getPosition()));
 
