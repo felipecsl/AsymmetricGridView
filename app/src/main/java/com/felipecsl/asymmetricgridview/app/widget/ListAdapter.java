@@ -48,10 +48,6 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
         } else
             v = (TextView) convertView;
 
-        v.setLayoutParams(new LinearLayout.LayoutParams(
-                getRowWidth(item),
-                getRowHeight(item)));
-
         v.setText(String.valueOf(item.getPosition()));
 
         return v;

@@ -140,6 +140,9 @@ public abstract class AsymmetricGridViewAdapter<T
                 spaceLeftInColumn -= currentItem.getRowSpan();
                 currentIndex = 0;
 
+                v.setLayoutParams(new LinearLayout.LayoutParams(getRowWidth(currentItem),
+                                                                getRowHeight(currentItem)));
+
                 childLayout.addView(v);
             } else if (currentIndex < rowItems.size() - 1) {
                 // Try again with next item
