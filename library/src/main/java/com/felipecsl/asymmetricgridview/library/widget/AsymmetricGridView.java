@@ -5,14 +5,10 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
-
-import java.util.List;
 
 public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
@@ -98,7 +94,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
         if (requestedColumnWidth > 0) {
             numColumns = (availableSpace + requestedHorizontalSpacing) /
-                         (requestedColumnWidth + requestedHorizontalSpacing);
+                    (requestedColumnWidth + requestedHorizontalSpacing);
         } else if (requestedColumnCount > 0) {
             numColumns = requestedColumnCount;
         } else {
@@ -132,7 +128,9 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
     public void setAllowReordering(final boolean allowReordering) {
         this.allowReordering = allowReordering;
-        gridAdapter.recalculateItemsPerRow();
-        gridAdapter.notifyDataSetChanged();
+        if (gridAdapter != null) {
+            gridAdapter.recalculateItemsPerRow();
+            gridAdapter.notifyDataSetChanged();
+        }
     }
 }
