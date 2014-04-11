@@ -25,6 +25,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     private final int requestedVerticalSpacing;
     private int requestedColumnWidth;
     private int requestedColumnCount;
+    private boolean allowReordering;
     private AsymmetricGridViewAdapter<T> gridAdapter;
     private OnItemClickListener onItemClickListener;
 
@@ -123,5 +124,15 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
     public int getAvailableSpace() {
         return getMeasuredWidth() - padding.left - padding.right;
+    }
+
+    public boolean isAllowReordering() {
+        return allowReordering;
+    }
+
+    public void setAllowReordering(final boolean allowReordering) {
+        this.allowReordering = allowReordering;
+        gridAdapter.recalculateItemsPerRow();
+        gridAdapter.notifyDataSetChanged();
     }
 }

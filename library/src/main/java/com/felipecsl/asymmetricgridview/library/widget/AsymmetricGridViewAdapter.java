@@ -316,8 +316,7 @@ public abstract class AsymmetricGridViewAdapter<T
                 } else if (spaceLeft >= spaceConsumption) {
                     spaceLeft -= spaceConsumption;
                     itemsThatFit.add(item);
-                } else if (currentItem == items.size()) {
-                    // no more space left in this row
+                } else if (!listView.isAllowReordering()) {
                     break;
                 }
             }

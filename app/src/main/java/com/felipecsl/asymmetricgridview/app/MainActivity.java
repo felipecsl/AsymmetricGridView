@@ -84,6 +84,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         } else if (id == R.id.reset_items) {
             currentOffset = 0;
             listView.getAdapter().setItems(get100Items());
+        } else if (id == R.id.reordering) {
+            listView.setAllowReordering(!listView.isAllowReordering());
         }
         return super.onOptionsItemSelected(item);
     }

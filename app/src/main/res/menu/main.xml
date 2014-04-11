@@ -37,4 +37,10 @@
           android:title="Reset items"
           android:orderInCategory="100"
           app:showAsAction="never" />
+
+    <item android:id="@+id/reordering"
+          android:title="Toggle allow reordering"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
+
 </menu>
