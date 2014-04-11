@@ -224,13 +224,14 @@ public abstract class AsymmetricGridViewAdapter<T
                 for (final T i : rowInfo.getItems())
                     newItems.add(0, i);
 
-                final RowInfo itemsThatFit = calculateItemsForRow(newItems);
+                final RowInfo stuffThatFit = calculateItemsForRow(newItems);
+                final List<T> itemsThatFit = stuffThatFit.getItems();
 
-                if (!itemsThatFit.getItems().isEmpty()) {
-                    for (int i = 0; i < itemsThatFit.getItems().size(); i++)
-                        newItems.remove(itemsThatFit.getItems().get(i));
+                if (!itemsThatFit.isEmpty()) {
+                    for (int i = 0; i < itemsThatFit.size(); i++)
+                        newItems.remove(itemsThatFit.get(i));
 
-                    itemsPerRow.put(lastRow, itemsThatFit);
+                    itemsPerRow.put(lastRow, stuffThatFit);
                 }
             }
         }
