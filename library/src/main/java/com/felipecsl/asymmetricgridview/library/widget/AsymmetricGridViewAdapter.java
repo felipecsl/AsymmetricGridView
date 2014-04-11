@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends ArrayAdapter<T> {
+public abstract class AsymmetricGridViewAdapter<T
+        extends AsymmetricItem> extends ArrayAdapter<T>
+        implements View.OnClickListener {
 
     private class RowInfo {
 
@@ -123,6 +125,8 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
                 final LinearLayout childLayout = findOrInitializeChildLayout(layout, columnIndex);
                 final View childConvertView = childLayout.getChildAt(currentColumnIndex);
                 final View v = getActualView(items.indexOf(currentItem), childConvertView, parent);
+                v.setTag(currentItem);
+                v.setOnClickListener(this);
 
                 currentColumnIndex += currentItem.getRowSpan();
                 spaceLeftInColumn -= currentItem.getRowSpan();
@@ -232,6 +236,12 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem> extend
         }
         calculateItemsPerRow(getCount(), newItems);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(final View v) {
+        final AsymmetricItem item = (AsymmetricItem) v.getTag();
+        listView.fireOnItemClick(items.indexOf(item), v);
     }
 
     @Override

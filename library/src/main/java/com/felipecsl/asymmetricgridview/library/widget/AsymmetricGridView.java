@@ -3,7 +3,9 @@ package com.felipecsl.asymmetricgridview.library.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -24,6 +26,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     private int requestedColumnWidth;
     private int requestedColumnCount;
     private AsymmetricGridViewAdapter<T> gridAdapter;
+    private OnItemClickListener onItemClickListener;
 
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -32,6 +35,8 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
         requestedHorizontalSpacing = defaultPadding;
         requestedVerticalSpacing = defaultPadding;
         padding = new Rect(defaultPadding, defaultPadding, defaultPadding, defaultPadding);
+
+        setItemsCanFocus(true);
 
         final ViewTreeObserver vto = getViewTreeObserver();
         if (vto != null)
@@ -44,6 +49,16 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
                     return false;
                 }
             });
+    }
+
+    @Override
+    public void setOnItemClickListener(final OnItemClickListener listener) {
+        onItemClickListener = listener;
+    }
+
+    protected void fireOnItemClick(final int position, final View v) {
+        if (onItemClickListener != null)
+            onItemClickListener.onItemClick(this, v, position, v.getId());
     }
 
     public void setAdapter(final AsymmetricGridViewAdapter<T> adapter) {

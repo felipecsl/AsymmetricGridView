@@ -2,13 +2,16 @@ package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
+import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
@@ -22,6 +25,7 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public View getActualView(final int position, final View convertView, final ViewGroup parent) {
         TextView v;
 
@@ -30,8 +34,10 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
         if (convertView == null) {
             v = new TextView(getContext());
             v.setGravity(Gravity.CENTER);
-            v.setBackgroundColor(Color.parseColor("#cc0000"));
+            v.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.text_view_background_selector));
             v.setTextColor(Color.parseColor("#ffffff"));
+            v.setTextSize(Utils.dpToPx(getContext(), 18));
+            v.setId(item.getPosition());
         } else
             v = (TextView) convertView;
 

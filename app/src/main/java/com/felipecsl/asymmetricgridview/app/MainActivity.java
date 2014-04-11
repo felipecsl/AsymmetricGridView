@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.app.widget.ListAdapter;
@@ -15,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     private AsymmetricGridView listView;
     private ListAdapter adapter;
@@ -31,6 +34,7 @@ public class MainActivity extends ActionBarActivity {
         adapter = new ListAdapter(this, listView, get100Items());
 
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
     }
 
     private static List<DemoItem> get100Items() {
@@ -82,5 +86,10 @@ public class MainActivity extends ActionBarActivity {
             listView.getAdapter().setItems(get100Items());
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+        Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
     }
 }
