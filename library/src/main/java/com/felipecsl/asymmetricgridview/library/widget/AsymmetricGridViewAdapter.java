@@ -9,6 +9,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
+import com.felipecsl.asymmetricgridview.library.AsyncTaskCompat;
 import com.felipecsl.asymmetricgridview.library.R;
 import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
@@ -54,6 +55,7 @@ public abstract class AsymmetricGridViewAdapter<T
     protected final AsymmetricGridView listView;
     protected final Context context;
     protected final List<T> items;
+
     private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
 
     Pool<IcsLinearLayout> linearLayoutPool;
@@ -254,8 +256,15 @@ public abstract class AsymmetricGridViewAdapter<T
                 }
             }
         }
-        calculateItemsPerRow(getCount(), newItems);
-        notifyDataSetChanged();
+
+        new ProcessRowsTask() {
+            @Override
+            protected void onPostExecute(List<RowInfo> rows) {
+                for (RowInfo row : rows)
+                    itemsPerRow.put(getCount(), row);
+                notifyDataSetChanged();
+            }
+        }.executeSerially(newItems);
     }
 
     @Override
@@ -282,31 +291,15 @@ public abstract class AsymmetricGridViewAdapter<T
         itemsPerRow.clear();
         final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
-        calculateItemsPerRow(0, itemsToAdd);
-    }
-
-    private void calculateItemsPerRow(int currentRow, List<T> itemsToAdd) {
-        while (!itemsToAdd.isEmpty()) {
-            final RowInfo stuffThatFit = calculateItemsForRow(itemsToAdd);
-
-            final List<T> itemsThatFit = stuffThatFit.getItems();
-            if (itemsThatFit.isEmpty()) {
-                // we can't fit a single item inside a row.
-                // bail out.
-                break;
+        //calculateItemsPerRow(0, itemsToAdd);
+        new ProcessRowsTask() {
+            @Override
+            protected void onPostExecute(List<RowInfo> rows) {
+                for (RowInfo row : rows)
+                    itemsPerRow.put(getCount(), row);
+                notifyDataSetChanged();
             }
-
-            for (int i = 0; i < itemsThatFit.size(); i++)
-                itemsToAdd.remove(itemsThatFit.get(i));
-
-            itemsPerRow.put(currentRow, stuffThatFit);
-            currentRow++;
-        }
-
-        if (listView.isDebugging()) {
-            for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
-                Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
-        }
+        }.executeSerially(itemsToAdd);
     }
 
     private RowInfo calculateItemsForRow(final List<T> items) {
@@ -350,6 +343,43 @@ public abstract class AsymmetricGridViewAdapter<T
         }
 
         return new RowInfo(rowHeight, itemsThatFit, spaceLeft);
+    }
+
+    class ProcessRowsTask extends AsyncTaskCompat<List<T>, Void, List<RowInfo>> {
+
+        @Override
+        protected List<RowInfo> doInBackground(List<T>... params) {
+            List<T> items = params[0];
+
+            return calculateItemsPerRow(0, items);
+        }
+
+        private List<RowInfo> calculateItemsPerRow(int currentRow, List<T> itemsToAdd) {
+            List<RowInfo> rows = new ArrayList<>();
+            while (!itemsToAdd.isEmpty()) {
+                final RowInfo stuffThatFit = calculateItemsForRow(itemsToAdd);
+
+                final List<T> itemsThatFit = stuffThatFit.getItems();
+                if (itemsThatFit.isEmpty()) {
+                    // we can't fit a single item inside a row.
+                    // bail out.
+                    break;
+                }
+
+                for (int i = 0; i < itemsThatFit.size(); i++)
+                    itemsToAdd.remove(itemsThatFit.get(i));
+
+                rows.add(stuffThatFit);
+                currentRow++;
+            }
+
+            if (listView.isDebugging()) {
+                for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
+                    Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
+            }
+
+            return rows;
+        }
     }
 
     PoolObjectFactory<IcsLinearLayout> linearLayoutPoolObjectFactory = new PoolObjectFactory<IcsLinearLayout>() {
