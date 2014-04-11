@@ -2,7 +2,6 @@ package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +56,7 @@ public abstract class AsymmetricGridViewAdapter<T
     protected final List<T> items;
     private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
 
-    Pool<LinearLayout> linearLayoutPool;
+    Pool<IcsLinearLayout> linearLayoutPool;
     Pool<View> viewPool;
 
     public AsymmetricGridViewAdapter(final Context context,
@@ -84,7 +83,7 @@ public abstract class AsymmetricGridViewAdapter<T
         final int rowHeight = listView.getColumnWidth() * rowSpan;
         // when the item spans multiple rows, we need to account for the vertical padding
         // and add that to the total final height
-        return rowHeight + ((rowSpan) * listView.getRequestedVerticalSpacing());
+        return rowHeight + ((rowSpan - 1) * listView.getRequestedVerticalSpacing());
     }
 
     protected int getRowWidth(final AsymmetricItem item) {
@@ -148,7 +147,7 @@ public abstract class AsymmetricGridViewAdapter<T
                 currentIndex = 0;
 
                 v.setLayoutParams(new LinearLayout.LayoutParams(getRowWidth(currentItem),
-                                                                getRowHeight(currentItem)));
+                        getRowHeight(currentItem)));
 
                 childLayout.addView(v);
             } else if (currentIndex < rowItems.size() - 1) {
@@ -167,27 +166,25 @@ public abstract class AsymmetricGridViewAdapter<T
         return layout;
     }
 
-    private LinearLayout findOrInitializeLayout(final View convertView, int position) {
-        LinearLayout layout;
+    private IcsLinearLayout findOrInitializeLayout(final View convertView, int position) {
+        IcsLinearLayout layout;
 
         if (convertView == null) {
-            layout = new LinearLayout(context);
+            layout = new IcsLinearLayout(context, null);
             if (listView.isDebugging())
                 layout.setBackgroundColor(Color.parseColor("#83F27B"));
 
-            if (Build.VERSION.SDK_INT >= 11) {
-                layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-                layout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_horizontal));
-            }
+            layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            layout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_horizontal));
 
             layout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                                                                AbsListView.LayoutParams.WRAP_CONTENT));
+                    AbsListView.LayoutParams.WRAP_CONTENT));
         } else
-            layout = (LinearLayout) convertView;
+            layout = (IcsLinearLayout) convertView;
 
         // Clear all layout children before starting
         for (int j = 0; j < layout.getChildCount(); j++) {
-            LinearLayout tempChild = (LinearLayout) layout.getChildAt(j);
+            IcsLinearLayout tempChild = (IcsLinearLayout) layout.getChildAt(j);
             linearLayoutPool.put(tempChild);
             for (int k = 0; k < tempChild.getChildCount(); k++)
                 viewPool.put(tempChild.getChildAt(k));
@@ -198,8 +195,8 @@ public abstract class AsymmetricGridViewAdapter<T
         return layout;
     }
 
-    private LinearLayout findOrInitializeChildLayout(final LinearLayout parentLayout, final int childIndex) {
-        LinearLayout childLayout = (LinearLayout) parentLayout.getChildAt(childIndex);
+    private IcsLinearLayout findOrInitializeChildLayout(final LinearLayout parentLayout, final int childIndex) {
+        IcsLinearLayout childLayout = (IcsLinearLayout) parentLayout.getChildAt(childIndex);
 
         if (childLayout == null) {
             childLayout = linearLayoutPool.get();
@@ -208,13 +205,11 @@ public abstract class AsymmetricGridViewAdapter<T
             if (listView.isDebugging())
                 childLayout.setBackgroundColor(Color.parseColor("#837BF2"));
 
-            if (Build.VERSION.SDK_INT >= 11) {
-                childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-                childLayout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_vertical));
-            }
+            childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            childLayout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_vertical));
 
             childLayout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
-                                                                     AbsListView.LayoutParams.MATCH_PARENT));
+                    AbsListView.LayoutParams.MATCH_PARENT));
             parentLayout.addView(childLayout);
         }
 
@@ -357,10 +352,10 @@ public abstract class AsymmetricGridViewAdapter<T
         return new RowInfo(rowHeight, itemsThatFit, spaceLeft);
     }
 
-    PoolObjectFactory<LinearLayout> linearLayoutPoolObjectFactory = new PoolObjectFactory<LinearLayout>() {
+    PoolObjectFactory<IcsLinearLayout> linearLayoutPoolObjectFactory = new PoolObjectFactory<IcsLinearLayout>() {
         @Override
-        public LinearLayout createObject() {
-            return new LinearLayout(context);
+        public IcsLinearLayout createObject() {
+            return new IcsLinearLayout(context, null);
         }
     };
 
@@ -418,7 +413,7 @@ public abstract class AsymmetricGridViewAdapter<T
 
         String getStats(String name) {
             return String.format("%s: size %d, hits %d, misses %d, created %d", name, size, hits,
-                                 misses, created);
+                    misses, created);
         }
     }
 
