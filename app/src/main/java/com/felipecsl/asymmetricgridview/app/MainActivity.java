@@ -29,7 +29,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (AsymmetricGridView) findViewById(R.id.listView);
-        listView.setRequestedColumnCount(2);
 
         adapter = new ListAdapter(this, listView, get100Items());
 
