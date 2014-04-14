@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     // ...
-    compile 'com.felipecsl:asymmetricgridview:1.0.0-SNAPSHOT'
+    compile 'com.felipecsl:asymmetricgridview:1.0.+'
 }
 ```
 
