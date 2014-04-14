@@ -39,7 +39,7 @@
           app:showAsAction="never" />
 
     <item android:id="@+id/reordering"
-          android:title="Toggle allow reordering"
+          android:title="Allow reordering"
           android:orderInCategory="100"
           app:showAsAction="never" />
 

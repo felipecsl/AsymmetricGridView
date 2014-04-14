@@ -101,10 +101,10 @@ public abstract class AsymmetricGridViewAdapter<T
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
-        LinearLayout layout = findOrInitializeLayout(convertView, position);
+        LinearLayout layout = findOrInitializeLayout(convertView);
 
         final RowInfo rowInfo = itemsPerRow.get(position);
-        final List<AsymmetricItem> rowItems = new ArrayList<>();
+        final List<T> rowItems = new ArrayList<>();
         rowItems.addAll(rowInfo.getItems());
 
         // Index to control the current position
@@ -115,20 +115,15 @@ public abstract class AsymmetricGridViewAdapter<T
         // in the array of all the items available for this row
         int currentIndex = 0;
 
-        // Index to control the current position
-        // within the current column
-        int currentColumnIndex = 0;
-
         int spaceLeftInColumn = rowInfo.getRowHeight();
 
         while (!rowItems.isEmpty() && columnIndex < listView.getNumColumns()) {
-            final AsymmetricItem currentItem = rowItems.get(currentIndex);
+            final T currentItem = rowItems.get(currentIndex);
 
             if (spaceLeftInColumn == 0) {
                 // No more space in this column. Move to next one
                 columnIndex++;
                 currentIndex = 0;
-                currentColumnIndex = 0;
                 spaceLeftInColumn = rowInfo.getRowHeight();
                 continue;
             }
@@ -144,7 +139,6 @@ public abstract class AsymmetricGridViewAdapter<T
                 v.setTag(currentItem);
                 v.setOnClickListener(this);
 
-                currentColumnIndex += currentItem.getRowSpan();
                 spaceLeftInColumn -= currentItem.getRowSpan();
                 currentIndex = 0;
 
@@ -168,15 +162,16 @@ public abstract class AsymmetricGridViewAdapter<T
         return layout;
     }
 
-    private IcsLinearLayout findOrInitializeLayout(final View convertView, int position) {
+    @SuppressWarnings("MagicConstant")
+    private IcsLinearLayout findOrInitializeLayout(final View convertView) {
         IcsLinearLayout layout;
 
-        if (convertView == null) {
+        if (convertView == null || !(convertView instanceof IcsLinearLayout)) {
             layout = new IcsLinearLayout(context, null);
             if (listView.isDebugging())
                 layout.setBackgroundColor(Color.parseColor("#83F27B"));
 
-            layout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            layout.setShowDividers(IcsLinearLayout.SHOW_DIVIDER_MIDDLE);
             layout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_horizontal));
 
             layout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
@@ -197,6 +192,7 @@ public abstract class AsymmetricGridViewAdapter<T
         return layout;
     }
 
+    @SuppressWarnings("MagicConstant")
     private IcsLinearLayout findOrInitializeChildLayout(final LinearLayout parentLayout, final int childIndex) {
         IcsLinearLayout childLayout = (IcsLinearLayout) parentLayout.getChildAt(childIndex);
 
@@ -207,7 +203,7 @@ public abstract class AsymmetricGridViewAdapter<T
             if (listView.isDebugging())
                 childLayout.setBackgroundColor(Color.parseColor("#837BF2"));
 
-            childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            childLayout.setShowDividers(IcsLinearLayout.SHOW_DIVIDER_MIDDLE);
             childLayout.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_vertical));
 
             childLayout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
@@ -230,8 +226,10 @@ public abstract class AsymmetricGridViewAdapter<T
     public void appendItems(List<T> newItems) {
         items.addAll(newItems);
 
-        final int lastRow = getCount() - 1;
-        final RowInfo rowInfo = itemsPerRow.get(lastRow);
+        RowInfo rowInfo = null;
+        final int lastRow = getRowCount() - 1;
+        if (lastRow >= 0)
+            rowInfo = itemsPerRow.get(lastRow);
 
         if (rowInfo != null) {
             final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
@@ -253,6 +251,7 @@ public abstract class AsymmetricGridViewAdapter<T
                         newItems.remove(itemsThatFit.get(i));
 
                     itemsPerRow.put(lastRow, stuffThatFit);
+                    notifyDataSetChanged();
                 }
             }
         }
@@ -261,8 +260,9 @@ public abstract class AsymmetricGridViewAdapter<T
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onClick(final View v) {
-        final AsymmetricItem item = (AsymmetricItem) v.getTag();
+        final T item = (T) v.getTag();
         listView.fireOnItemClick(items.indexOf(item), v);
     }
 
@@ -274,6 +274,10 @@ public abstract class AsymmetricGridViewAdapter<T
     @Override
     public int getCount() {
         // Returns the row count for ListView display purposes
+        return getRowCount();
+    }
+
+    public int getRowCount() {
         return itemsPerRow.size();
     }
 
@@ -284,7 +288,7 @@ public abstract class AsymmetricGridViewAdapter<T
         itemsPerRow.clear();
         final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
-        //calculateItemsPerRow(0, itemsToAdd);
+
         new ProcessRowsTask().executeSerially(itemsToAdd);
     }
 
@@ -334,21 +338,22 @@ public abstract class AsymmetricGridViewAdapter<T
     class ProcessRowsTask extends AsyncTaskCompat<List<T>, Void, List<RowInfo>> {
 
         @Override
-        protected List<RowInfo> doInBackground(List<T>... params) {
-            List<T> items = params[0];
-
-            return calculateItemsPerRow(0, items);
+        @SafeVarargs
+        protected final List<RowInfo> doInBackground(final List<T>... params) {
+            return calculateItemsPerRow(0, params[0]);
         }
 
         @Override
         protected void onPostExecute(List<RowInfo> rows) {
             for (RowInfo row : rows)
-                itemsPerRow.put(getCount(), row);
+                itemsPerRow.put(getRowCount(), row);
+
             notifyDataSetChanged();
         }
 
-        private List<RowInfo> calculateItemsPerRow(int currentRow, List<T> itemsToAdd) {
+        private List<RowInfo> calculateItemsPerRow(int currentRow, final List<T> itemsToAdd) {
             List<RowInfo> rows = new ArrayList<>();
+
             while (!itemsToAdd.isEmpty()) {
                 final RowInfo stuffThatFit = calculateItemsForRow(itemsToAdd);
 
@@ -359,8 +364,8 @@ public abstract class AsymmetricGridViewAdapter<T
                     break;
                 }
 
-                for (int i = 0; i < itemsThatFit.size(); i++)
-                    itemsToAdd.remove(itemsThatFit.get(i));
+                for (T anItemsThatFit : itemsThatFit)
+                    itemsToAdd.remove(anItemsThatFit);
 
                 rows.add(stuffThatFit);
                 currentRow++;

@@ -85,6 +85,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             listView.getAdapter().setItems(get100Items());
         } else if (id == R.id.reordering) {
             listView.setAllowReordering(!listView.isAllowReordering());
+            item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");
         } else if (id == R.id.debugging) {
             int index = listView.getFirstVisiblePosition();
             View v = listView.getChildAt(0);
