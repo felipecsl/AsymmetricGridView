@@ -2,7 +2,17 @@
 
 An Android custom ListView that implements multiple columns and variable sized elements.
 
-Alpha version. Use with caution. Please report issues found.
+Please note that this is currently in a preview state.
+This basically means that the API is not fixed and you should expect changes between releases.
+
+### [Demo Youtube video](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
+
+### Screenshots:
+
+![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_2_cols.png)
+![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_3_cols.png)
+![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_4_cols.png)
+![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_5_cols.png)
 
 ### Usage
 
@@ -69,15 +79,6 @@ listView.isAllowReordering(); // true
 ```
 
 Works with Android 2.3.x and above.
-
-### [Demo Youtube video](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
-
-### Screenshots:
-
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_2_cols.png)
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_3_cols.png)
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_4_cols.png)
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_5_cols.png)
 
 ### Caveats
 
