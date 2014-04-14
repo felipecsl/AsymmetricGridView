@@ -171,7 +171,7 @@ public abstract class AsymmetricGridViewAdapter<T
     private IcsLinearLayout findOrInitializeLayout(final View convertView, int position) {
         IcsLinearLayout layout;
 
-        if (convertView == null) {
+        if (convertView == null || !(convertView instanceof IcsLinearLayout)) {
             layout = new IcsLinearLayout(context, null);
             if (listView.isDebugging())
                 layout.setBackgroundColor(Color.parseColor("#83F27B"));
@@ -230,8 +230,10 @@ public abstract class AsymmetricGridViewAdapter<T
     public void appendItems(List<T> newItems) {
         items.addAll(newItems);
 
-        final int lastRow = getCount() - 1;
-        final RowInfo rowInfo = itemsPerRow.get(lastRow);
+        RowInfo rowInfo = null;
+        final int lastRow = getRowCount() - 1;
+        if (lastRow >= 0)
+            rowInfo = itemsPerRow.get(lastRow);
 
         if (rowInfo != null) {
             final float spaceLeftInLastRow = rowInfo.getSpaceLeft();
@@ -253,6 +255,7 @@ public abstract class AsymmetricGridViewAdapter<T
                         newItems.remove(itemsThatFit.get(i));
 
                     itemsPerRow.put(lastRow, stuffThatFit);
+                    notifyDataSetChanged();
                 }
             }
         }
@@ -261,7 +264,7 @@ public abstract class AsymmetricGridViewAdapter<T
             @Override
             protected void onPostExecute(List<RowInfo> rows) {
                 for (RowInfo row : rows)
-                    itemsPerRow.put(getCount(), row);
+                    itemsPerRow.put(getRowCount(), row);
                 notifyDataSetChanged();
             }
         }.executeSerially(newItems);
@@ -284,6 +287,10 @@ public abstract class AsymmetricGridViewAdapter<T
         return itemsPerRow.size();
     }
 
+    public int getRowCount() {
+        return itemsPerRow.size();
+    }
+
     public void recalculateItemsPerRow() {
         linearLayoutPool.clear();
         viewPool.clear();
@@ -296,7 +303,7 @@ public abstract class AsymmetricGridViewAdapter<T
             @Override
             protected void onPostExecute(List<RowInfo> rows) {
                 for (RowInfo row : rows)
-                    itemsPerRow.put(getCount(), row);
+                    itemsPerRow.put(getRowCount(), row);
                 notifyDataSetChanged();
             }
         }.executeSerially(itemsToAdd);
