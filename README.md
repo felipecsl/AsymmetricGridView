@@ -50,11 +50,22 @@ protected void onCreate(Bundle savedInstanceState) {
 Supports resetting and appending more elements into the adapter:
 
 ```java
-// appending more items at the end of the adapter
+// Will append more items at the end of the adapter.
 listView.getAdapter().appendItems(moreItems);
 
-// resetting the adapter items
+// resetting the adapter items. Will clear the adapter
+// and add the new items.
 listView.getAdapter().setItems(items);
+```
+
+Toggle to enable/disable reordering of elements to better fill the grid
+
+```java
+// Setting to true will move items up and down to better use the space
+// Defaults to false.
+listView.setAllowReordering(true);
+
+listView.isAllowReordering(); // true
 ```
 
 Works with Android 2.3.x and above.
