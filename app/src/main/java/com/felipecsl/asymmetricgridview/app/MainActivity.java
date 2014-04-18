@@ -22,7 +22,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
     private AsymmetricGridView listView;
     private ListAdapter adapter;
-    private static int currentOffset = 0;
+    private int currentOffset = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,23 +30,36 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         listView = (AsymmetricGridView) findViewById(R.id.listView);
 
-        adapter = new ListAdapter(this, listView, get100Items());
+        adapter = new ListAdapter(this, listView, new ArrayList<DemoItem>());
 
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(this);
     }
 
-    private static List<DemoItem> get100Items() {
+    private List<DemoItem> getMoreItems(int qty) {
         final List<DemoItem> items = new ArrayList<>();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < qty; i++) {
             int span = Math.random() < 0.2f ? 2 : 1;
             items.add(new DemoItem(span, span, currentOffset + i));
         }
 
-        currentOffset += 100;
+        currentOffset += qty;
 
         return items;
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("currentOffset", currentOffset);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentOffset = savedInstanceState.getInt("currentOffset");
     }
 
     @Override
@@ -79,10 +92,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.append_items) {
-            listView.getAdapter().appendItems(get100Items());
+            listView.getAdapter().appendItems(getMoreItems(50));
         } else if (id == R.id.reset_items) {
             currentOffset = 0;
-            listView.getAdapter().setItems(get100Items());
+            listView.getAdapter().setItems(getMoreItems(50));
         } else if (id == R.id.reordering) {
             listView.setAllowReordering(!listView.isAllowReordering());
             item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");

@@ -24,17 +24,9 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d(getClass().getName(), "getView(" + position + ", " + convertView + ")");
-        return super.getView(position, convertView, parent);
-    }
-
-    @Override
     @SuppressWarnings("deprecation")
     public View getActualView(final int position, final View convertView, final ViewGroup parent) {
         TextView v;
-
-        Log.d(getClass().getName(), "getActualView(" + position + ", " + convertView + ")");
 
         DemoItem item = getItem(position);
 

@@ -1,6 +1,8 @@
 package com.felipecsl.asymmetricgridview.library.model;
 
-public interface AsymmetricItem {
+import android.os.Parcelable;
+
+public interface AsymmetricItem extends Parcelable {
     public int getColumnSpan();
     public int getRowSpan();
 }

@@ -2,6 +2,8 @@ package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,48 +20,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
-public abstract class AsymmetricGridViewAdapter<T
-        extends AsymmetricItem> extends ArrayAdapter<T>
+public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
+        extends ArrayAdapter<T>
         implements View.OnClickListener, View.OnLongClickListener {
-
-    private class RowInfo {
-
-        private final List<T> items;
-        private final int rowHeight;
-        private final float spaceLeft;
-
-        public RowInfo(final int rowHeight,
-                       final List<T> items,
-                       final float spaceLeft) {
-            this.rowHeight = rowHeight;
-            this.items = items;
-            this.spaceLeft = spaceLeft;
-        }
-
-        public List<T> getItems() {
-            return items;
-        }
-
-        public int getRowHeight() {
-            return rowHeight;
-        }
-
-        public float getSpaceLeft() {
-            return spaceLeft;
-        }
-    }
 
     private static final String TAG = "AsymmetricGridViewAdapter";
     protected final AsymmetricGridView listView;
     protected final Context context;
     protected final List<T> items;
 
-    private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
-
-    Pool<IcsLinearLayout> linearLayoutPool;
-    Pool<View> viewPool;
+    private Map<Integer, RowInfo<T>> itemsPerRow = new HashMap<>();
+    private final ViewPool<IcsLinearLayout> linearLayoutPool;
+    private final ViewPool<View> viewPool = new ViewPool<>();
 
     public AsymmetricGridViewAdapter(final Context context,
                                      final AsymmetricGridView listView,
@@ -67,12 +40,10 @@ public abstract class AsymmetricGridViewAdapter<T
 
         super(context, 0, items);
 
+        this.linearLayoutPool = new ViewPool<>(new LinearLayoutPoolObjectFactory(context));
         this.items = items;
         this.context = context;
         this.listView = listView;
-
-        linearLayoutPool = new Pool<>(linearLayoutPoolObjectFactory);
-        viewPool = new Pool<>();
     }
 
     public abstract View getActualView(final int position, final View convertView, final ViewGroup parent);
@@ -103,7 +74,7 @@ public abstract class AsymmetricGridViewAdapter<T
     public View getView(final int position, final View convertView, final ViewGroup parent) {
         LinearLayout layout = findOrInitializeLayout(convertView);
 
-        final RowInfo rowInfo = itemsPerRow.get(position);
+        final RowInfo<T> rowInfo = itemsPerRow.get(position);
         final List<T> rowItems = new ArrayList<>();
         rowItems.addAll(rowInfo.getItems());
 
@@ -161,6 +132,32 @@ public abstract class AsymmetricGridViewAdapter<T
         }
 
         return layout;
+    }
+
+    public Parcelable saveState() {
+        final Bundle bundle = new Bundle();
+        bundle.putInt("totalItems", items.size());
+
+        for (int i = 0; i < items.size(); i++)
+            bundle.putParcelable("item_" + i, items.get(i));
+
+        return bundle;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void restoreState(final Parcelable state) {
+        final Bundle bundle = (Bundle) state;
+
+        if (bundle != null) {
+            final int totalItems = bundle.getInt("totalItems");
+            final List<T> tmpItems = new ArrayList<>();
+
+            for (int i = 0; i < totalItems; i++)
+                tmpItems.add((T) bundle.getParcelable("item_" + i));
+
+            // will trigger recalculateItemsPerRow()
+            setItems(tmpItems);
+        }
     }
 
     @SuppressWarnings("MagicConstant")
@@ -227,7 +224,7 @@ public abstract class AsymmetricGridViewAdapter<T
     public void appendItems(List<T> newItems) {
         items.addAll(newItems);
 
-        RowInfo rowInfo = null;
+        RowInfo<T> rowInfo = null;
         final int lastRow = getRowCount() - 1;
         if (lastRow >= 0)
             rowInfo = itemsPerRow.get(lastRow);
@@ -244,7 +241,7 @@ public abstract class AsymmetricGridViewAdapter<T
                 for (final T i : rowInfo.getItems())
                     newItems.add(0, i);
 
-                final RowInfo stuffThatFit = calculateItemsForRow(newItems);
+                final RowInfo<T> stuffThatFit = calculateItemsForRow(newItems);
                 final List<T> itemsThatFit = stuffThatFit.getItems();
 
                 if (!itemsThatFit.isEmpty()) {
@@ -300,11 +297,11 @@ public abstract class AsymmetricGridViewAdapter<T
         new ProcessRowsTask().executeSerially(itemsToAdd);
     }
 
-    private RowInfo calculateItemsForRow(final List<T> items) {
+    private RowInfo<T> calculateItemsForRow(final List<T> items) {
         return calculateItemsForRow(items, listView.getNumColumns());
     }
 
-    private RowInfo calculateItemsForRow(final List<T> items, final float initialSpaceLeft) {
+    private RowInfo<T> calculateItemsForRow(final List<T> items, final float initialSpaceLeft) {
         final List<T> itemsThatFit = new ArrayList<>();
         int currentItem = 0;
         int rowHeight = 1;
@@ -343,27 +340,27 @@ public abstract class AsymmetricGridViewAdapter<T
         return new RowInfo(rowHeight, itemsThatFit, spaceLeft);
     }
 
-    class ProcessRowsTask extends AsyncTaskCompat<List<T>, Void, List<RowInfo>> {
+    class ProcessRowsTask extends AsyncTaskCompat<List<T>, Void, List<RowInfo<T>>> {
 
         @Override
         @SafeVarargs
-        protected final List<RowInfo> doInBackground(final List<T>... params) {
+        protected final List<RowInfo<T>> doInBackground(final List<T>... params) {
             return calculateItemsPerRow(0, params[0]);
         }
 
         @Override
-        protected void onPostExecute(List<RowInfo> rows) {
-            for (RowInfo row : rows)
+        protected void onPostExecute(List<RowInfo<T>> rows) {
+            for (RowInfo<T> row : rows)
                 itemsPerRow.put(getRowCount(), row);
 
             notifyDataSetChanged();
         }
 
-        private List<RowInfo> calculateItemsPerRow(int currentRow, final List<T> itemsToAdd) {
-            List<RowInfo> rows = new ArrayList<>();
+        private List<RowInfo<T>> calculateItemsPerRow(int currentRow, final List<T> itemsToAdd) {
+            List<RowInfo<T>> rows = new ArrayList<>();
 
             while (!itemsToAdd.isEmpty()) {
-                final RowInfo stuffThatFit = calculateItemsForRow(itemsToAdd);
+                final RowInfo<T> stuffThatFit = calculateItemsForRow(itemsToAdd);
 
                 final List<T> itemsThatFit = stuffThatFit.getItems();
                 if (itemsThatFit.isEmpty()) {
@@ -380,7 +377,7 @@ public abstract class AsymmetricGridViewAdapter<T
             }
 
             if (listView.isDebugging()) {
-                for (Map.Entry<Integer, RowInfo> e : itemsPerRow.entrySet())
+                for (Map.Entry<Integer, RowInfo<T>> e : itemsPerRow.entrySet())
                     Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
             }
 
@@ -388,72 +385,4 @@ public abstract class AsymmetricGridViewAdapter<T
         }
     }
 
-    PoolObjectFactory<IcsLinearLayout> linearLayoutPoolObjectFactory = new PoolObjectFactory<IcsLinearLayout>() {
-        @Override
-        public IcsLinearLayout createObject() {
-            return new IcsLinearLayout(context, null);
-        }
-    };
-
-    static class Pool<T> {
-        Stack<T> stack = new Stack<>();
-        PoolObjectFactory<T> factory = null;
-        PoolStats stats;
-
-        Pool() {
-            stats = new PoolStats();
-        }
-
-        Pool(PoolObjectFactory<T> factory) {
-            this.factory = factory;
-        }
-
-        T get() {
-            if (stack.size() > 0) {
-                stats.hits++;
-                stats.size--;
-                return stack.pop();
-            }
-
-            stats.misses++;
-
-            T object = factory != null ? factory.createObject() : null;
-
-            if (object != null) {
-                stats.created++;
-            }
-
-            return object;
-        }
-
-        void put(T object) {
-            stack.push(object);
-            stats.size++;
-        }
-
-        void clear() {
-            stats = new PoolStats();
-            stack.clear();
-        }
-
-        String getStats(String name) {
-            return stats.getStats(name);
-        }
-    }
-
-    static class PoolStats {
-        int size = 0;
-        int hits = 0;
-        int misses = 0;
-        int created = 0;
-
-        String getStats(String name) {
-            return String.format("%s: size %d, hits %d, misses %d, created %d", name, size, hits,
-                    misses, created);
-        }
-    }
-
-    public interface PoolObjectFactory<T> {
-        public T createObject();
-    }
 }

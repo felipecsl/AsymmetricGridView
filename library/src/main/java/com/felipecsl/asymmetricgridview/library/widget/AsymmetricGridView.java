@@ -2,6 +2,9 @@ package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -15,18 +18,18 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
     private static final int DEFAULT_COLUMN_COUNT = 2;
     private static final String TAG = "MultiColumnListView";
-    private int numColumns = DEFAULT_COLUMN_COUNT;
-    private final Rect padding;
-    private final int defaultPadding;
-    private final int requestedHorizontalSpacing;
-    private final int requestedVerticalSpacing;
-    private int requestedColumnWidth;
-    private int requestedColumnCount;
-    private boolean allowReordering;
-    private boolean debugging = false;
-    private AsymmetricGridViewAdapter<T> gridAdapter;
-    private OnItemClickListener onItemClickListener;
-    private OnItemLongClickListener onItemLongClickListener;
+    protected int numColumns = DEFAULT_COLUMN_COUNT;
+    protected final Rect padding;
+    protected int defaultPadding;
+    protected int requestedHorizontalSpacing;
+    protected int requestedVerticalSpacing;
+    protected int requestedColumnWidth;
+    protected int requestedColumnCount;
+    protected boolean allowReordering;
+    protected boolean debugging = false;
+    protected AsymmetricGridViewAdapter<T> gridAdapter;
+    protected OnItemClickListener onItemClickListener;
+    protected OnItemLongClickListener onItemLongClickListener;
 
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -43,7 +46,8 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
                 public boolean onPreDraw() {
                     getViewTreeObserver().removeOnPreDrawListener(this);
                     determineColumns();
-                    gridAdapter.notifyDataSetChanged();
+                    if (gridAdapter != null)
+                        gridAdapter.notifyDataSetChanged();
                     return false;
                 }
             });
@@ -124,6 +128,50 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
         return numColumns;
     }
 
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.allowReordering = allowReordering;
+        ss.debugging = debugging;
+        ss.defaultPadding = defaultPadding;
+        ss.numColumns = numColumns;
+        ss.requestedColumnCount = requestedColumnCount;
+        ss.requestedColumnWidth = requestedColumnWidth;
+        ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
+        ss.requestedVerticalSpacing = requestedVerticalSpacing;
+
+        if (getAdapter() != null) {
+            ss.adapterState = getAdapter().saveState();
+        }
+        return ss;
+    }
+
+    @Override
+    public void onRestoreInstanceState(final Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+
+        SavedState ss = (SavedState)state;
+        super.onRestoreInstanceState(ss.getSuperState());
+
+        if (gridAdapter != null)
+            gridAdapter.restoreState(ss.adapterState);
+
+        allowReordering = ss.allowReordering;
+        debugging = ss.debugging;
+        defaultPadding = ss.defaultPadding;
+        numColumns = ss.numColumns;
+        requestedColumnCount = ss.requestedColumnCount;
+        requestedColumnWidth = ss.requestedColumnWidth;
+        requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
+        requestedVerticalSpacing = ss.requestedVerticalSpacing;
+
+        setSelectionFromTop(20, 0);
+    }
+
     public int getNumColumns() {
         return numColumns;
     }
@@ -154,5 +202,64 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
 
     public void setDebugging(boolean debugging) {
         this.debugging = debugging;
+    }
+
+    public static class SavedState extends BaseSavedState {
+
+        int numColumns;
+        int requestedColumnWidth;
+        int requestedColumnCount;
+        int requestedVerticalSpacing;
+        int requestedHorizontalSpacing;
+        int defaultPadding;
+        boolean debugging;
+        boolean allowReordering;
+        Parcelable adapterState;
+        ClassLoader loader;
+
+        public SavedState(final Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel in) {
+            super(in);
+
+            numColumns = in.readInt();
+            requestedColumnWidth = in.readInt();
+            requestedColumnCount = in.readInt();
+            requestedVerticalSpacing = in.readInt();
+            requestedHorizontalSpacing = in.readInt();
+            defaultPadding = in.readInt();
+            debugging = in.readByte() == 1;
+            allowReordering = in.readByte() == 1;
+            adapterState = in.readParcelable(loader);
+        }
+
+        @Override
+        public void writeToParcel(final Parcel dest, final int flags) {
+            super.writeToParcel(dest, flags);
+
+            dest.writeInt(numColumns);
+            dest.writeInt(requestedColumnWidth);
+            dest.writeInt(requestedColumnCount);
+            dest.writeInt(requestedVerticalSpacing);
+            dest.writeInt(requestedHorizontalSpacing);
+            dest.writeInt(defaultPadding);
+            dest.writeByte((byte) (debugging ? 1 : 0));
+            dest.writeByte((byte) (allowReordering ? 1 : 0));
+            dest.writeParcelable(adapterState, flags);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(final Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(final int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }
