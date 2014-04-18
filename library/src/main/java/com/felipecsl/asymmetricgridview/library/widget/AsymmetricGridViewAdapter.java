@@ -22,7 +22,7 @@ import java.util.Stack;
 
 public abstract class AsymmetricGridViewAdapter<T
         extends AsymmetricItem> extends ArrayAdapter<T>
-        implements View.OnClickListener {
+        implements View.OnClickListener, View.OnLongClickListener {
 
     private class RowInfo {
 
@@ -138,6 +138,7 @@ public abstract class AsymmetricGridViewAdapter<T
                 final View v = getActualView(index, childConvertView, parent);
                 v.setTag(currentItem);
                 v.setOnClickListener(this);
+                v.setOnLongClickListener(this);
 
                 spaceLeftInColumn -= currentItem.getRowSpan();
                 currentIndex = 0;
@@ -264,6 +265,13 @@ public abstract class AsymmetricGridViewAdapter<T
     public void onClick(final View v) {
         final T item = (T) v.getTag();
         listView.fireOnItemClick(items.indexOf(item), v);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean onLongClick(View v) {
+        final T item = (T) v.getTag();
+        return listView.fireOnItemLongClick(items.indexOf(item), v);
     }
 
     @Override

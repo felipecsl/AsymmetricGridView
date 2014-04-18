@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.felipecsl.asymmetricgridview.library.Utils;
@@ -25,6 +26,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     private boolean debugging = false;
     private AsymmetricGridViewAdapter<T> gridAdapter;
     private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
 
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -55,6 +57,17 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     protected void fireOnItemClick(final int position, final View v) {
         if (onItemClickListener != null)
             onItemClickListener.onItemClick(this, v, position, v.getId());
+    }
+
+    @Override
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        onItemLongClickListener = listener;
+    }
+
+    protected boolean fireOnItemLongClick(final int position, final View v) {
+        if (onItemLongClickListener != null)
+            return onItemLongClickListener.onItemLongClick(this, v, position, v.getId());
+        return false;
     }
 
     public void setAdapter(final AsymmetricGridViewAdapter<T> adapter) {
