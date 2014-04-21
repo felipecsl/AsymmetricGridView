@@ -2,13 +2,11 @@ package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.felipecsl.asymmetricgridview.library.Utils;
@@ -154,7 +152,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
             return;
         }
 
-        SavedState ss = (SavedState)state;
+        SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
 
         if (gridAdapter != null)

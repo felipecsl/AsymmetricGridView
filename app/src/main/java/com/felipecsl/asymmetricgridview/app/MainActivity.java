@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.app.widget.ListAdapter;
-import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
 
 import java.util.ArrayList;

@@ -2,11 +2,9 @@ package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.felipecsl.asymmetricgridview.app.R;
