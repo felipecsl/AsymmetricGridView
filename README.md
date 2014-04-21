@@ -7,7 +7,7 @@ This basically means that the API is not fixed and you should expect changes bet
 
 ### Demo video:
 
-![Youtube demo](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
+[![Youtube demo](http://img.youtube.com/vi/hVmk3wUpbaY/0.jpg)](https://www.youtube.com/watch?v=hVmk3wUpbaY)
 
 ### Screenshots:
 
