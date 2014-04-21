@@ -221,6 +221,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         notifyDataSetChanged();
     }
 
+    @SuppressWarnings("unchecked")
     public void appendItems(List<T> newItems) {
         items.addAll(newItems);
 
@@ -245,8 +246,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
                 final List<T> itemsThatFit = stuffThatFit.getItems();
 
                 if (!itemsThatFit.isEmpty()) {
-                    for (int i = 0; i < itemsThatFit.size(); i++)
-                        newItems.remove(itemsThatFit.get(i));
+                    for (T anItemsThatFit : itemsThatFit) newItems.remove(anItemsThatFit);
 
                     itemsPerRow.put(lastRow, stuffThatFit);
                     notifyDataSetChanged();
@@ -286,6 +286,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         return itemsPerRow.size();
     }
 
+    @SuppressWarnings("unchecked")
     public void recalculateItemsPerRow() {
         linearLayoutPool.clear();
         viewPool.clear();
@@ -337,7 +338,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
             }
         }
 
-        return new RowInfo(rowHeight, itemsThatFit, spaceLeft);
+        return new RowInfo<>(rowHeight, itemsThatFit, spaceLeft);
     }
 
     class ProcessRowsTask extends AsyncTaskCompat<List<T>, Void, List<RowInfo<T>>> {
