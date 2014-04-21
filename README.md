@@ -20,7 +20,7 @@ In your ``build.gradle`` file:
 
 ```groovy
 repositories {
-    maven { url 'https://raw.github.com/luciofm/m2repository/master' }
+    maven { url 'https://raw.github.com/felipecsl/m2repository/master' }
     // ...
 }
 
