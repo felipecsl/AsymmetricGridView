@@ -5,14 +5,16 @@ An Android custom ListView that implements multiple columns and variable sized e
 Please note that this is currently in a preview state.
 This basically means that the API is not fixed and you should expect changes between releases.
 
-### [Demo Youtube video](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
+### Demo video:
+
+![Youtube demo](https://www.youtube.com/watch?v=hVmk3wUpbaY&feature=youtu.be)
 
 ### Screenshots:
 
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_2_cols.png)
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_3_cols.png)
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_4_cols.png)
-![](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_5_cols.png)
+![screenshot 1](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_2_cols.png)
+![screenshot 2](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_3_cols.png)
+![screenshot 3](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_4_cols.png)
+![screenshot 4](https://raw.githubusercontent.com/felipecsl/AsymmetricGridView/master/screenshots/ss_5_cols.png)
 
 ### Usage
 
