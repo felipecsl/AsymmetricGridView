@@ -149,6 +149,8 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         final Bundle bundle = (Bundle) state;
 
         if (bundle != null) {
+            bundle.setClassLoader(getClass().getClassLoader());
+
             final int totalItems = bundle.getInt("totalItems");
             final List<T> tmpItems = new ArrayList<>();
 
