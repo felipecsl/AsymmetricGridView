@@ -39,6 +39,11 @@ public class DemoItem implements AsymmetricItem {
     }
 
     @Override
+    public String toString() {
+        return String.format("%s: %sx%s", position, rowSpan, columnSpan);
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

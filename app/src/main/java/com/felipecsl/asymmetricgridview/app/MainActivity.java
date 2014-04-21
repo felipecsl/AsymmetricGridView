@@ -2,6 +2,7 @@ package com.felipecsl.asymmetricgridview.app;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,19 +19,23 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
-    private AsymmetricGridView listView;
+    private static final String TAG = "MainActivity";
+    private AsymmetricGridView<DemoItem> listView;
     private ListAdapter adapter;
     private int currentOffset = 0;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listView = (AsymmetricGridView) findViewById(R.id.listView);
+        listView = (AsymmetricGridView<DemoItem>) findViewById(R.id.listView);
 
         adapter = new ListAdapter(this, listView, new ArrayList<DemoItem>());
 
+        listView.setRequestedColumnCount(3);
         listView.setAdapter(adapter);
+        listView.setDebugging(true);
 
         listView.setOnItemClickListener(this);
     }
@@ -39,8 +44,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         final List<DemoItem> items = new ArrayList<>();
 
         for (int i = 0; i < qty; i++) {
-            int span = Math.random() < 0.2f ? 2 : 1;
-            items.add(new DemoItem(span, span, currentOffset + i));
+            int rowSpan = Math.random() < 0.2f ? 2 : 1;
+            int colSpan = Math.random() < 0.2f ? 2 : 1;
+            final DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
+            items.add(item);
         }
 
         currentOffset += qty;
@@ -103,6 +110,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             int top = (v == null) ? 0 : v.getTop();
 
             listView.setDebugging(!listView.isDebugging());
+            item.setTitle(listView.isDebugging() ? "Disable debugging" : "Enable debugging");
             listView.setAdapter(adapter);
 
             listView.setSelectionFromTop(index, top);

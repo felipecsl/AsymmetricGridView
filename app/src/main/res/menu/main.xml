@@ -44,7 +44,7 @@
           app:showAsAction="never" />
 
     <item android:id="@+id/debugging"
-          android:title="Toggle View Debugging"
+          android:title="Disable debugging"
           android:orderInCategory="100"
           app:showAsAction="never" />
 

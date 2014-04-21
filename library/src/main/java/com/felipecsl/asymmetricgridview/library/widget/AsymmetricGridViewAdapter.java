@@ -306,39 +306,30 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         final List<T> itemsThatFit = new ArrayList<>();
         int currentItem = 0;
         int rowHeight = 1;
-        float spaceLeft = initialSpaceLeft;
+        float areaLeft = initialSpaceLeft;
 
-        while (spaceLeft > 0 && currentItem < items.size()) {
+        while (areaLeft > 0 && currentItem < items.size()) {
             final T item = items.get(currentItem++);
+            float itemArea = item.getRowSpan() * item.getColumnSpan();
 
-            if (item.getColumnSpan() == 1) {
-                // 1x sized items
-                float spaceConsumption = (float) (1.0 / rowHeight);
+            if (listView.isDebugging())
+                Log.d(TAG, String.format("item %s in row with height %s consumes %s area", item, rowHeight, itemArea));
 
-                if (spaceLeft >= spaceConsumption) {
-                    spaceLeft -= spaceConsumption;
-                    itemsThatFit.add(item);
-                }
-            } else {
-                // 2x sizes items
-                float spaceConsumption = 2;
-
-                if (rowHeight == 1) {
-                    // restart with double height
-                    itemsThatFit.clear();
-                    rowHeight = 2;
-                    currentItem = 0;
-                    spaceLeft = initialSpaceLeft;
-                } else if (spaceLeft >= spaceConsumption) {
-                    spaceLeft -= spaceConsumption;
-                    itemsThatFit.add(item);
-                } else if (!listView.isAllowReordering()) {
-                    break;
-                }
+            if (rowHeight < item.getRowSpan()) {
+                // restart with double height
+                itemsThatFit.clear();
+                rowHeight = item.getRowSpan();
+                currentItem = 0;
+                areaLeft = initialSpaceLeft * item.getRowSpan();
+            } else if (areaLeft >= itemArea) {
+                areaLeft -= itemArea;
+                itemsThatFit.add(item);
+            } else if (!listView.isAllowReordering()) {
+                break;
             }
         }
 
-        return new RowInfo<>(rowHeight, itemsThatFit, spaceLeft);
+        return new RowInfo<>(rowHeight, itemsThatFit, areaLeft);
     }
 
     class ProcessRowsTask extends AsyncTaskCompat<List<T>, Void, List<RowInfo<T>>> {
@@ -353,6 +344,11 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         protected void onPostExecute(List<RowInfo<T>> rows) {
             for (RowInfo<T> row : rows)
                 itemsPerRow.put(getRowCount(), row);
+
+            if (listView.isDebugging()) {
+                for (Map.Entry<Integer, RowInfo<T>> e : itemsPerRow.entrySet())
+                    Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
+            }
 
             notifyDataSetChanged();
         }
@@ -375,11 +371,6 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
 
                 rows.add(stuffThatFit);
                 currentRow++;
-            }
-
-            if (listView.isDebugging()) {
-                for (Map.Entry<Integer, RowInfo<T>> e : itemsPerRow.entrySet())
-                    Log.d(TAG, "row: " + e.getKey() + ", items: " + e.getValue().getItems().size());
             }
 
             return rows;
