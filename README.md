@@ -5,9 +5,11 @@ An Android custom ListView that implements multiple columns and variable sized e
 Please note that this is currently in a preview state.
 This basically means that the API is not fixed and you should expect changes between releases.
 
-### Demo video:
+## Sample application:
 
-[![Youtube demo](http://img.youtube.com/vi/hVmk3wUpbaY/0.jpg)](https://www.youtube.com/watch?v=hVmk3wUpbaY)
+Try out the sample application on [Google Play](https://play.google.com/store/apps/details?id=com.felipecsl.asymmetricgridview.app)
+
+[![Gplay](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.felipecsl.asymmetricgridview.app)
 
 ### Screenshots:
 
