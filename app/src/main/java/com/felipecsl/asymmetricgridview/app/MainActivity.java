@@ -48,9 +48,12 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         final List<DemoItem> items = new ArrayList<>();
 
         for (int i = 0; i < qty; i++) {
-            int rowSpan = Math.random() < 0.2f ? 2 : 1;
             int colSpan = Math.random() < 0.2f ? 2 : 1;
-            final DemoItem item = new DemoItem(colSpan, colSpan, currentOffset + i);
+            // Swap the next 2 lines to have items with variable
+            // column/row span.
+            // int rowSpan = Math.random() < 0.2f ? 2 : 1;
+            int rowSpan = colSpan;
+            final DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
             items.add(item);
         }
 
