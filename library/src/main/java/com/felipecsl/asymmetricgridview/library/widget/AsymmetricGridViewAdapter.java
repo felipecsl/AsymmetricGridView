@@ -33,6 +33,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
     private Map<Integer, RowInfo<T>> itemsPerRow = new HashMap<>();
     private final ViewPool<IcsLinearLayout> linearLayoutPool;
     private final ViewPool<View> viewPool = new ViewPool<>();
+    private ProcessRowsTask asyncTask;
 
     public AsymmetricGridViewAdapter(final Context context,
                                      final AsymmetricGridView listView,
@@ -72,6 +73,9 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
+        if (listView.isDebugging())
+            Log.d(TAG, "getView(" + String.valueOf(position) + ")");
+
         LinearLayout layout = findOrInitializeLayout(convertView);
 
         final RowInfo<T> rowInfo = itemsPerRow.get(position);
@@ -256,7 +260,8 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
             }
         }
 
-        new ProcessRowsTask().executeSerially(newItems);
+        asyncTask = new ProcessRowsTask();
+        asyncTask.executeSerially(newItems);
     }
 
     @Override
@@ -290,14 +295,18 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
 
     @SuppressWarnings("unchecked")
     public void recalculateItemsPerRow() {
+        if (asyncTask != null)
+            asyncTask.cancel(true);
+
         linearLayoutPool.clear();
         viewPool.clear();
-
         itemsPerRow.clear();
+
         final List<T> itemsToAdd = new ArrayList<>();
         itemsToAdd.addAll(items);
 
-        new ProcessRowsTask().executeSerially(itemsToAdd);
+        asyncTask = new ProcessRowsTask();
+        asyncTask.executeSerially(itemsToAdd);
     }
 
     private RowInfo<T> calculateItemsForRow(final List<T> items) {

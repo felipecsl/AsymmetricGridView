@@ -11,7 +11,10 @@ import android.widget.Toast;
 
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.app.widget.ListAdapter;
+import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         listView = (AsymmetricGridView<DemoItem>) findViewById(R.id.listView);
 
         adapter = new ListAdapter(this, listView, new ArrayList<DemoItem>());
+        adapter.appendItems(getMoreItems(50));
 
         listView.setRequestedColumnCount(3);
         listView.setAdapter(adapter);
@@ -46,7 +50,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         for (int i = 0; i < qty; i++) {
             int rowSpan = Math.random() < 0.2f ? 2 : 1;
             int colSpan = Math.random() < 0.2f ? 2 : 1;
-            final DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
+            final DemoItem item = new DemoItem(colSpan, colSpan, currentOffset + i);
             items.add(item);
         }
 
@@ -62,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     }
 
     @Override
-    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NotNull final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentOffset = savedInstanceState.getInt("currentOffset");
     }
@@ -94,6 +98,14 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             listView.setAdapter(adapter);
         } else if (id == R.id.five_columns) {
             listView.setRequestedColumnCount(5);
+            listView.determineColumns();
+            listView.setAdapter(adapter);
+        } else if (id == R.id.onetwenty_dp_columns) {
+            listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
+            listView.determineColumns();
+            listView.setAdapter(adapter);
+        } else if (id == R.id.twoforty_dp_columns) {
+            listView.setRequestedColumnWidth(Utils.dpToPx(this, 240));
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.append_items) {

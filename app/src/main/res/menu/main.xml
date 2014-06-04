@@ -28,6 +28,16 @@
           android:orderInCategory="100"
           app:showAsAction="never" />
 
+    <item android:id="@+id/onetwenty_dp_columns"
+          android:title="120dp Columns"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
+
+    <item android:id="@+id/twoforty_dp_columns"
+          android:title="240dp Columns"
+          android:orderInCategory="100"
+          app:showAsAction="never" />
+
     <item android:id="@+id/append_items"
           android:title="Add more items"
           android:orderInCategory="100"
