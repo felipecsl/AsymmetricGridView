@@ -86,12 +86,15 @@ Works with Android 2.3.x and above.
 
 ### Caveats
 
-Currently only supports items with rowSpan = 2 and columnSpan = 2.
+* Currently only has good support for items with rowSpan = 2 and columnSpan = 2.
 In the near future it will support different layout configurations.
 
-It will work best if you don't have too many items with different sizes. Ideally less
+* It will work best if you don't have too many items with different sizes. Ideally less
 than 20% of your items are of special sizes, otherwise the library may not find the best
 way to accommodate all the items without leaving a lot of empty space behind.
+
+* Row layout is too complex, with many nested LinearLayouts. Move to a more flat layout
+with a custom ViewGroup possibly.
 
 ### Contributing
 
