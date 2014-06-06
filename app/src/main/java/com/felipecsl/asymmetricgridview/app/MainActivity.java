@@ -2,7 +2,6 @@ package com.felipecsl.asymmetricgridview.app;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +22,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";
-    private AsymmetricGridView<DemoItem> listView;
+    private AsymmetricGridView listView;
     private ListAdapter adapter;
     private int currentOffset = 0;
 
@@ -32,7 +31,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listView = (AsymmetricGridView<DemoItem>) findViewById(R.id.listView);
+        listView = (AsymmetricGridView) findViewById(R.id.listView);
 
         adapter = new ListAdapter(this, listView, new ArrayList<DemoItem>());
         adapter.appendItems(getMoreItems(50));
@@ -112,10 +111,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.append_items) {
-            listView.getAdapter().appendItems(getMoreItems(50));
+            adapter.appendItems(getMoreItems(50));
         } else if (id == R.id.reset_items) {
             currentOffset = 0;
-            listView.getAdapter().setItems(getMoreItems(50));
+            adapter.setItems(getMoreItems(50));
         } else if (id == R.id.reordering) {
             listView.setAllowReordering(!listView.isAllowReordering());
             item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");

@@ -52,11 +52,14 @@ protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     listView = (AsymmetricGridView) findViewById(R.id.listView);
+
     // Choose your own preferred column width
     listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
     final List<AsymmetricItem> items = new ArrayList<>();
+
     // initialize your items array
     adapter = new ListAdapter(this, listView, items);
+
     listView.setAdapter(adapter);
 }
 ```

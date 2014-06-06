@@ -11,6 +11,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
+import com.felipecsl.asymmetricgridview.library.AsymmetricGridViewAdapterContract;
 import com.felipecsl.asymmetricgridview.library.AsyncTaskCompat;
 import com.felipecsl.asymmetricgridview.library.R;
 import com.felipecsl.asymmetricgridview.library.Utils;
@@ -23,7 +24,9 @@ import java.util.Map;
 
 public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         extends ArrayAdapter<T>
-        implements View.OnClickListener, View.OnLongClickListener {
+        implements View.OnClickListener,
+        View.OnLongClickListener,
+        AsymmetricGridViewAdapterContract {
 
     private static final String TAG = "AsymmetricGridViewAdapter";
     protected final AsymmetricGridView listView;
@@ -276,11 +279,6 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
     public boolean onLongClick(View v) {
         final T item = (T) v.getTag();
         return listView.fireOnItemLongClick(items.indexOf(item), v);
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
     }
 
     @Override

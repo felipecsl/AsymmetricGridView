@@ -7,12 +7,13 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.felipecsl.asymmetricgridview.library.AsymmetricGridViewAdapterContract;
 import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 
-public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
+public class AsymmetricGridView extends ListView {
 
     private static final int DEFAULT_COLUMN_COUNT = 2;
     private static final String TAG = "MultiColumnListView";
@@ -25,7 +26,7 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     protected int requestedColumnCount;
     protected boolean allowReordering;
     protected boolean debugging = false;
-    protected AsymmetricGridViewAdapter<T> gridAdapter;
+    protected AsymmetricGridViewAdapterContract gridAdapter;
     protected OnItemClickListener onItemClickListener;
     protected OnItemLongClickListener onItemLongClickListener;
 
@@ -67,19 +68,18 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
     }
 
     protected boolean fireOnItemLongClick(final int position, final View v) {
-        if (onItemLongClickListener != null)
-            return onItemLongClickListener.onItemLongClick(this, v, position, v.getId());
-        return false;
+        return onItemLongClickListener != null && onItemLongClickListener.onItemLongClick(this, v, position, v.getId());
     }
 
-    public void setAdapter(final AsymmetricGridViewAdapter<T> adapter) {
-        gridAdapter = adapter;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setAdapter(final ListAdapter adapter) {
+        if (!(adapter instanceof AsymmetricGridViewAdapterContract))
+            throw new UnsupportedOperationException("Adapter must implement AsymmetricGridViewAdapterContract");
+
+        gridAdapter = (AsymmetricGridViewAdapterContract) adapter;
         super.setAdapter(adapter);
-        adapter.recalculateItemsPerRow();
-    }
-
-    public AsymmetricGridViewAdapter<T> getAdapter() {
-        return gridAdapter;
+        gridAdapter.recalculateItemsPerRow();
     }
 
     public void setRequestedColumnWidth(final int width) {
@@ -139,8 +139,8 @@ public class AsymmetricGridView<T extends AsymmetricItem> extends ListView {
         ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
         ss.requestedVerticalSpacing = requestedVerticalSpacing;
 
-        if (getAdapter() != null) {
-            ss.adapterState = getAdapter().saveState();
+        if (gridAdapter != null) {
+            ss.adapterState = gridAdapter.saveState();
         }
         return ss;
     }
