@@ -4,5 +4,16 @@ mvn install:install-file \
 -Dversion=1.0.$1-SNAPSHOT \
 -DgeneratePom=true \
 -Dpackaging=aar \
--Dfile=library/build/libs/library.aar \
+-Dfile=library/build/outputs/aar/library.aar \
 -DlocalRepositoryPath=/Users/felipecsl/Data/Projects/m2repository/
+
+mv /Users/felipecsl/Data/Projects/m2repository/com/felipecsl/asymmetricgridview/1.0.$1-SNAPSHOT/maven-metadata-local.xml \
+/Users/felipecsl/Data/Projects/m2repository/com/felipecsl/asymmetricgridview/1.0.$1-SNAPSHOT/maven-metadata.xml
+
+mv /Users/felipecsl/Data/Projects/m2repository/com/felipecsl/asymmetricgridview/maven-metadata-local.xml \
+/Users/felipecsl/Data/Projects/m2repository/com/felipecsl/asymmetricgridview/maven-metadata.xml
+
+cd /Users/felipecsl/Data/Projects/m2repository/
+
+git ci -am 'Updates AsymmetricGridView to 1.0.$1-SNAPSHOT'
+git push felipecsl master
