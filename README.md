@@ -24,7 +24,7 @@ In your ``build.gradle`` file:
 
 ```groovy
 repositories {
-    maven { url 'https://raw.github.com/felipecsl/m2repository/master' }
+    maven { url 'https://github.com/felipecsl/m2repository/raw/master/' }
     // ...
 }
 
