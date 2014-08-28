@@ -1,11 +1,11 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    buildToolsVersion "20.0.0"
 
     defaultConfig {
-        versionCode 21
+        versionCode 24
         versionName "1.0"
     }
 
