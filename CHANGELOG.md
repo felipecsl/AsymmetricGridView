@@ -1,3 +1,3 @@
-1.0.24
+# 1.0.24
 
-# Updates dependencies (build tools version, app compat, etc)
+* Updates dependencies (build tools version, app compat, etc)
