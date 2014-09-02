@@ -16,7 +16,7 @@ import com.felipecsl.asymmetricgridview.library.Utils;
 public class AsymmetricGridView extends ListView {
 
     private static final int DEFAULT_COLUMN_COUNT = 2;
-    private static final String TAG = "MultiColumnListView";
+    private static final String TAG = "AsymmetricGridView";
     protected int numColumns = DEFAULT_COLUMN_COUNT;
     protected final Rect padding;
     protected int defaultPadding;
@@ -25,7 +25,7 @@ public class AsymmetricGridView extends ListView {
     protected int requestedColumnWidth;
     protected int requestedColumnCount;
     protected boolean allowReordering;
-    protected boolean debugging = false;
+    protected boolean debugging;
     protected AsymmetricGridViewAdapterContract gridAdapter;
     protected OnItemClickListener onItemClickListener;
     protected OnItemLongClickListener onItemLongClickListener;
@@ -139,9 +139,9 @@ public class AsymmetricGridView extends ListView {
         ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
         ss.requestedVerticalSpacing = requestedVerticalSpacing;
 
-        if (gridAdapter != null) {
+        if (gridAdapter != null)
             ss.adapterState = gridAdapter.saveState();
-        }
+
         return ss;
     }
 
@@ -155,9 +155,6 @@ public class AsymmetricGridView extends ListView {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
 
-        if (gridAdapter != null)
-            gridAdapter.restoreState(ss.adapterState);
-
         allowReordering = ss.allowReordering;
         debugging = ss.debugging;
         defaultPadding = ss.defaultPadding;
@@ -166,6 +163,9 @@ public class AsymmetricGridView extends ListView {
         requestedColumnWidth = ss.requestedColumnWidth;
         requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
         requestedVerticalSpacing = ss.requestedVerticalSpacing;
+
+        if (gridAdapter != null)
+            gridAdapter.restoreState(ss.adapterState);
 
         setSelectionFromTop(20, 0);
     }
