@@ -40,14 +40,12 @@ public class AsymmetricGridView extends ListView {
 
         final ViewTreeObserver vto = getViewTreeObserver();
         if (vto != null)
-            vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    getViewTreeObserver().removeOnPreDrawListener(this);
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override public void onGlobalLayout() {
+                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     determineColumns();
                     if (gridAdapter != null)
-                        gridAdapter.notifyDataSetChanged();
-                    return false;
+                        gridAdapter.recalculateItemsPerRow();
                 }
             });
     }
