@@ -8,7 +8,5 @@
     android:fadingEdge="none"
     android:focusable="false"
     android:gravity="center"
-    android:dividerHeight="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
+    android:dividerHeight="3dp"
     android:listSelector="#00000000"/>

@@ -1,7 +1,6 @@
 package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -18,10 +17,7 @@ public class AsymmetricGridView extends ListView {
     private static final int DEFAULT_COLUMN_COUNT = 2;
     private static final String TAG = "AsymmetricGridView";
     protected int numColumns = DEFAULT_COLUMN_COUNT;
-    protected final Rect padding;
-    protected int defaultPadding;
     protected int requestedHorizontalSpacing;
-    protected int requestedVerticalSpacing;
     protected int requestedColumnWidth;
     protected int requestedColumnCount;
     protected boolean allowReordering;
@@ -33,10 +29,7 @@ public class AsymmetricGridView extends ListView {
     public AsymmetricGridView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
 
-        defaultPadding = Utils.dpToPx(context, 5);
-        requestedHorizontalSpacing = defaultPadding;
-        requestedVerticalSpacing = defaultPadding;
-        padding = new Rect(defaultPadding, defaultPadding, defaultPadding, defaultPadding);
+        requestedHorizontalSpacing = Utils.dpToPx(context, 5);
 
         final ViewTreeObserver vto = getViewTreeObserver();
         if (vto != null)
@@ -92,8 +85,8 @@ public class AsymmetricGridView extends ListView {
         return requestedHorizontalSpacing;
     }
 
-    public int getRequestedVerticalSpacing() {
-        return requestedVerticalSpacing;
+    public void setRequestedHorizontalSpacing(int spacing) {
+        requestedHorizontalSpacing = spacing;
     }
 
     @Override
@@ -130,12 +123,10 @@ public class AsymmetricGridView extends ListView {
         SavedState ss = new SavedState(superState);
         ss.allowReordering = allowReordering;
         ss.debugging = debugging;
-        ss.defaultPadding = defaultPadding;
         ss.numColumns = numColumns;
         ss.requestedColumnCount = requestedColumnCount;
         ss.requestedColumnWidth = requestedColumnWidth;
         ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
-        ss.requestedVerticalSpacing = requestedVerticalSpacing;
 
         if (gridAdapter != null)
             ss.adapterState = gridAdapter.saveState();
@@ -155,12 +146,10 @@ public class AsymmetricGridView extends ListView {
 
         allowReordering = ss.allowReordering;
         debugging = ss.debugging;
-        defaultPadding = ss.defaultPadding;
         numColumns = ss.numColumns;
         requestedColumnCount = ss.requestedColumnCount;
         requestedColumnWidth = ss.requestedColumnWidth;
         requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
-        requestedVerticalSpacing = ss.requestedVerticalSpacing;
 
         if (gridAdapter != null)
             gridAdapter.restoreState(ss.adapterState);
@@ -177,7 +166,7 @@ public class AsymmetricGridView extends ListView {
     }
 
     public int getAvailableSpace() {
-        return getMeasuredWidth() - padding.left - padding.right;
+        return getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
     }
 
     public boolean isAllowReordering() {

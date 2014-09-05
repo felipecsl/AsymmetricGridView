@@ -60,7 +60,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         final int rowHeight = listView.getColumnWidth() * rowSpan;
         // when the item spans multiple rows, we need to account for the vertical padding
         // and add that to the total final height
-        return rowHeight + ((rowSpan - 1) * listView.getRequestedVerticalSpacing());
+        return rowHeight + ((rowSpan - 1) * listView.getDividerHeight());
     }
 
     protected int getRowWidth(final AsymmetricItem item) {

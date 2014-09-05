@@ -37,6 +37,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         adapter.appendItems(getMoreItems(50));
 
         listView.setRequestedColumnCount(3);
+        listView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
         listView.setAdapter(adapter);
         listView.setDebugging(true);
 
