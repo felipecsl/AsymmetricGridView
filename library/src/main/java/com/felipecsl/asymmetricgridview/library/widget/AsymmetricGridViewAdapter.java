@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 
 import com.felipecsl.asymmetricgridview.library.AsymmetricGridViewAdapterContract;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
-        extends ArrayAdapter<T>
+        extends BaseAdapter
         implements View.OnClickListener,
         View.OnLongClickListener,
         AsymmetricGridViewAdapterContract {
@@ -42,8 +42,6 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
                                      final AsymmetricGridView listView,
                                      final List<T> items) {
 
-        super(context, 0, items);
-
         this.linearLayoutPool = new ViewPool<>(new LinearLayoutPoolObjectFactory(context));
         this.items = items;
         this.context = context;
@@ -54,6 +52,14 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
 
     protected int getRowHeight(final AsymmetricItem item) {
         return getRowHeight(item.getRowSpan());
+    }
+
+    public T getItem(int position) {
+        return items.get(position);
+    }
+
+    public long getItemId(int position) {
+        return position;
     }
 
     protected int getRowHeight(int rowSpan) {
@@ -71,7 +77,7 @@ public abstract class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         final int rowWidth = listView.getColumnWidth() * columnSpan;
         // when the item spans multiple columns, we need to account for the horizontal padding
         // and add that to the total final width
-        return Math.min(rowWidth + ((columnSpan - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(getContext()));
+        return Math.min(rowWidth + ((columnSpan - 1) * listView.getRequestedHorizontalSpacing()), Utils.getScreenWidth(context));
     }
 
     @Override

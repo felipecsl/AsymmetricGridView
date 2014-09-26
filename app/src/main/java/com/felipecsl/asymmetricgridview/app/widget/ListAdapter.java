@@ -29,11 +29,11 @@ public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
         DemoItem item = getItem(position);
 
         if (convertView == null) {
-            v = new TextView(getContext());
+            v = new TextView(context);
             v.setGravity(Gravity.CENTER);
-            v.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.text_view_background_selector));
+            v.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_view_background_selector));
             v.setTextColor(Color.parseColor("#ffffff"));
-            v.setTextSize(Utils.dpToPx(getContext(), 18));
+            v.setTextSize(Utils.dpToPx(context, 18));
             v.setId(item.getPosition());
         } else
             v = (TextView) convertView;

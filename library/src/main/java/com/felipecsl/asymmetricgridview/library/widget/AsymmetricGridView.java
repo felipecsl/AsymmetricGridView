@@ -177,7 +177,6 @@ public class AsymmetricGridView extends ListView {
         this.allowReordering = allowReordering;
         if (gridAdapter != null) {
             gridAdapter.recalculateItemsPerRow();
-            gridAdapter.notifyDataSetChanged();
         }
     }
 
