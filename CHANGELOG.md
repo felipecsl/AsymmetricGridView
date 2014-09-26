@@ -1,4 +1,4 @@
-# 1.1 (Not yet released)
+# 1.1.0
 
 * Allows using a WrapperListAdapter as the AsymmetricGridView adapter for more flexibility.
 
