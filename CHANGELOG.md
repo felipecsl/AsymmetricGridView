@@ -1,3 +1,7 @@
+# 1.1 (Not yet released)
+
+* Allows using a WrapperListAdapter as the AsymmetricGridView adapter for more flexibility.
+
 # 1.0.27
 
 * Fixes grid padding, vertical and horizontal spacing calculation. Uses standard listView
