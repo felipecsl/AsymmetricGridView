@@ -15,9 +15,11 @@ import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter
 
 import java.util.List;
 
-public class ListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
+// Sample adapter implementation extending from AsymmetricGridViewAdapter<DemoItem>.
+// This is the easiest way to get started.
+public class DefaultListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
 
-    public ListAdapter(final Context context, final AsymmetricGridView listView, final List<DemoItem> items) {
+    public DefaultListAdapter(final Context context, final AsymmetricGridView listView, final List<DemoItem> items) {
         super(context, listView, items);
     }
 

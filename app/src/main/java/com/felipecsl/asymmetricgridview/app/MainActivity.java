@@ -6,12 +6,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
+import android.widget.WrapperListAdapter;
 
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
-import com.felipecsl.asymmetricgridview.app.widget.ListAdapter;
+import com.felipecsl.asymmetricgridview.app.widget.DefaultListAdapter;
 import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
+import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +28,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private AsymmetricGridView listView;
     private ListAdapter adapter;
     private int currentOffset = 0;
+    private AsymmetricGridViewAdapter<DemoItem> asymmetricAdapter;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -33,8 +37,16 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         listView = (AsymmetricGridView) findViewById(R.id.listView);
 
-        adapter = new ListAdapter(this, listView, new ArrayList<DemoItem>());
-        adapter.appendItems(getMoreItems(50));
+        // you can also use ListAdapterWrapper class if you want to test with an WrapperListAdapter:
+        // adapter = new ListAdapterWrapper(this, listView, new ArrayList<DemoItem>());
+
+        adapter = new DefaultListAdapter(this, listView, new ArrayList<DemoItem>());
+
+        if (adapter instanceof WrapperListAdapter)
+            asymmetricAdapter = (AsymmetricGridViewAdapter) ((WrapperListAdapter) adapter).getWrappedAdapter();
+        else
+            asymmetricAdapter = (AsymmetricGridViewAdapter<DemoItem>) adapter;
+        asymmetricAdapter.appendItems(getMoreItems(50));
 
         listView.setRequestedColumnCount(3);
         listView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
@@ -112,10 +124,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             listView.determineColumns();
             listView.setAdapter(adapter);
         } else if (id == R.id.append_items) {
-            adapter.appendItems(getMoreItems(50));
+            asymmetricAdapter.appendItems(getMoreItems(50));
         } else if (id == R.id.reset_items) {
             currentOffset = 0;
-            adapter.setItems(getMoreItems(50));
+            asymmetricAdapter.setItems(getMoreItems(50));
         } else if (id == R.id.reordering) {
             listView.setAllowReordering(!listView.isAllowReordering());
             item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");

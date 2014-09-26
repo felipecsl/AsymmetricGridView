@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.WrapperListAdapter;
 
 import com.felipecsl.asymmetricgridview.library.AsymmetricGridViewAdapterContract;
 import com.felipecsl.asymmetricgridview.library.Utils;
@@ -65,11 +66,21 @@ public class AsymmetricGridView extends ListView {
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(final ListAdapter adapter) {
-        if (!(adapter instanceof AsymmetricGridViewAdapterContract))
-            throw new UnsupportedOperationException("Adapter must implement AsymmetricGridViewAdapterContract");
+        ListAdapter innerAdapter = adapter;
 
-        gridAdapter = (AsymmetricGridViewAdapterContract) adapter;
-        super.setAdapter(adapter);
+        if (innerAdapter instanceof WrapperListAdapter) {
+            WrapperListAdapter wrapperAdapter = (WrapperListAdapter) innerAdapter;
+            innerAdapter = wrapperAdapter.getWrappedAdapter();
+
+            if (!(innerAdapter instanceof AsymmetricGridViewAdapterContract))
+                throw new UnsupportedOperationException("Wrapped adapter must implement AsymmetricGridViewAdapterContract");
+        } else {
+            if (!(innerAdapter instanceof AsymmetricGridViewAdapterContract))
+                throw new UnsupportedOperationException("Adapter must implement AsymmetricGridViewAdapterContract");
+        }
+
+        gridAdapter = (AsymmetricGridViewAdapterContract) innerAdapter;
+        super.setAdapter(innerAdapter);
         gridAdapter.recalculateItemsPerRow();
     }
 
