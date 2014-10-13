@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.WrapperListAdapter;
 
-import com.felipecsl.asymmetricgridview.library.AsymmetricGridViewAdapterContract;
 import com.felipecsl.asymmetricgridview.library.Utils;
 
 public class AsymmetricGridView extends ListView {
@@ -23,7 +21,7 @@ public class AsymmetricGridView extends ListView {
     protected int requestedColumnCount;
     protected boolean allowReordering;
     protected boolean debugging;
-    protected AsymmetricGridViewAdapterContract gridAdapter;
+    protected AsymmetricGridViewAdapter gridAdapter;
     protected OnItemClickListener onItemClickListener;
     protected OnItemLongClickListener onItemLongClickListener;
 
@@ -66,21 +64,13 @@ public class AsymmetricGridView extends ListView {
     @Override
     @SuppressWarnings("unchecked")
     public void setAdapter(final ListAdapter adapter) {
-        ListAdapter innerAdapter = adapter;
+        if (!(adapter instanceof AsymmetricGridViewAdapter))
+            throw new UnsupportedOperationException(
+                    "Adapter must be an instance of AsymmetricGridViewAdapter");
 
-        if (innerAdapter instanceof WrapperListAdapter) {
-            WrapperListAdapter wrapperAdapter = (WrapperListAdapter) innerAdapter;
-            innerAdapter = wrapperAdapter.getWrappedAdapter();
+        gridAdapter = (AsymmetricGridViewAdapter) adapter;
+        super.setAdapter(adapter);
 
-            if (!(innerAdapter instanceof AsymmetricGridViewAdapterContract))
-                throw new UnsupportedOperationException("Wrapped adapter must implement AsymmetricGridViewAdapterContract");
-        } else {
-            if (!(innerAdapter instanceof AsymmetricGridViewAdapterContract))
-                throw new UnsupportedOperationException("Adapter must implement AsymmetricGridViewAdapterContract");
-        }
-
-        gridAdapter = (AsymmetricGridViewAdapterContract) innerAdapter;
-        super.setAdapter(innerAdapter);
         gridAdapter.recalculateItemsPerRow();
     }
 
@@ -139,8 +129,8 @@ public class AsymmetricGridView extends ListView {
         ss.requestedColumnWidth = requestedColumnWidth;
         ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
 
-        if (gridAdapter != null)
-            ss.adapterState = gridAdapter.saveState();
+//        if (gridAdapter != null)
+//            ss.adapterState = gridAdapter.saveState();
 
         return ss;
     }
@@ -162,8 +152,8 @@ public class AsymmetricGridView extends ListView {
         requestedColumnWidth = ss.requestedColumnWidth;
         requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
 
-        if (gridAdapter != null)
-            gridAdapter.restoreState(ss.adapterState);
+//        if (gridAdapter != null)
+//            gridAdapter.restoreState(ss.adapterState);
 
         setSelectionFromTop(20, 0);
     }

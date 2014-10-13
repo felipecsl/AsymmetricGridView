@@ -1,15 +1,14 @@
 package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
-import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
@@ -17,31 +16,40 @@ import java.util.List;
 
 // Sample adapter implementation extending from AsymmetricGridViewAdapter<DemoItem>.
 // This is the easiest way to get started.
-public class DefaultListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
+public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAdapter {
 
-    public DefaultListAdapter(final Context context, final AsymmetricGridView listView, final List<DemoItem> items) {
-        super(context, listView, items);
+    private final LayoutInflater layoutInflater;
+
+    public DefaultListAdapter(Context context, List<DemoItem> items) {
+        super(context, 0, items);
+        layoutInflater = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE));
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public View getActualView(final int position, final View convertView, final ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         TextView v;
 
         DemoItem item = getItem(position);
 
         if (convertView == null) {
-            v = new TextView(context);
-            v.setGravity(Gravity.CENTER);
-            v.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_view_background_selector));
-            v.setTextColor(Color.parseColor("#ffffff"));
-            v.setTextSize(Utils.dpToPx(context, 18));
-            v.setId(item.getPosition());
+            v = (TextView) layoutInflater.inflate(
+                    R.layout.adapter_item, parent, false);
         } else
             v = (TextView) convertView;
 
         v.setText(String.valueOf(item.getPosition()));
 
         return v;
+    }
+
+    public void appendItems(List<DemoItem> newItems) {
+        addAll(newItems);
+        notifyDataSetChanged();
+    }
+
+    public void setItems(List<DemoItem> moreItems) {
+        clear();
+        appendItems(moreItems);
     }
 }

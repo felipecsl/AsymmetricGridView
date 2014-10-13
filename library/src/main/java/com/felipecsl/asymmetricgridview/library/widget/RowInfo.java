@@ -10,14 +10,11 @@ import java.util.List;
 
 class RowInfo<T extends AsymmetricItem> implements Parcelable {
 
-    private final List<T> items;
+    private final List<RowItem<T>> items;
     private final int rowHeight;
     private final float spaceLeft;
 
-    public RowInfo(final int rowHeight,
-                   final List<T> items,
-                   final float spaceLeft) {
-
+    public RowInfo(int rowHeight, List<RowItem<T>> items, float spaceLeft) {
         this.rowHeight = rowHeight;
         this.items = items;
         this.spaceLeft = spaceLeft;
@@ -32,12 +29,11 @@ class RowInfo<T extends AsymmetricItem> implements Parcelable {
         items = new ArrayList<>();
         final ClassLoader classLoader = AsymmetricItem.class.getClassLoader();
 
-        for (int i = 0; i < totalItems; i++) {
-            items.add((T) in.readParcelable(classLoader));
-        }
+        for (int i = 0; i < totalItems; i++)
+            items.add(new RowItem(in.readInt(), (T) in.readParcelable(classLoader)));
     }
 
-    public List<T> getItems() {
+    public List<RowItem<T>> getItems() {
         return items;
     }
 
@@ -60,8 +56,10 @@ class RowInfo<T extends AsymmetricItem> implements Parcelable {
         dest.writeFloat(spaceLeft);
         dest.writeInt(items.size());
 
-        for (int i = 0; i < items.size(); i++)
-            dest.writeParcelable(items.get(i), 0);
+        for (RowItem rowItem : items) {
+            dest.writeInt(rowItem.getIndex());
+            dest.writeParcelable(rowItem.getItem(), 0);
+        }
     }
 
     /* Parcelable interface implementation */
