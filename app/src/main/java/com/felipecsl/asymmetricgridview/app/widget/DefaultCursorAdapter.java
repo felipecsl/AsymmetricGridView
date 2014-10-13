@@ -11,10 +11,6 @@ import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 
 import java.util.List;
 
-// Here is a sample of how you could use your own adapter and implement
-// the WrapperListAdapter interface to wrap the asymmetric grid adapter.
-// Use this for a more customizable setup, if you can't extend from
-// AsymmetricGridViewAdapter (typically if you already have a custom base adapter class).
 public class DefaultCursorAdapter
         extends SimpleCursorAdapter
         implements DemoAdapter {
