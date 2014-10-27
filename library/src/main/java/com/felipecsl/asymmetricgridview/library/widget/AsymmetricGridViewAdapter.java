@@ -1,6 +1,7 @@
 package com.felipecsl.asymmetricgridview.library.widget;
 
 import android.content.Context;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.util.Log;
@@ -94,11 +95,14 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         if (listView.isDebugging())
             Log.d(TAG, "getView(" + String.valueOf(position) + ")");
 
-        LinearLayout layout = findOrInitializeLayout(convertView);
-
         final RowInfo<T> rowInfo = itemsPerRow.get(position);
         final List<RowItem<T>> rowItems = new ArrayList<>();
+        if (rowInfo == null)
+            return convertView;
+
         rowItems.addAll(rowInfo.getItems());
+
+        LinearLayout layout = findOrInitializeLayout(convertView);
 
         // Index to control the current position
         // of the current column in this row
@@ -352,8 +356,13 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem>
         protected final List<RowInfo<T>> doInBackground(Void... params) {
             // We need a map in order to associate the item position in the wrapped adapter.
             List<RowItem<T>> itemsToAdd = new ArrayList<>();
-            for (int i = 0; i < wrappedAdapter.getCount(); i++)
-                itemsToAdd.add(new RowItem(i, (T) wrappedAdapter.getItem(i)));
+            for (int i = 0; i < wrappedAdapter.getCount(); i++) {
+                try {
+                    itemsToAdd.add(new RowItem(i, (T) wrappedAdapter.getItem(i)));
+                } catch (CursorIndexOutOfBoundsException e) {
+                    Log.w(TAG, e);
+                }
+            }
 
             return calculateItemsPerRow(itemsToAdd);
         }
