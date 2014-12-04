@@ -23,14 +23,10 @@ Try out the sample application on [Google Play](https://play.google.com/store/ap
 In your ``build.gradle`` file:
 
 ```groovy
-repositories {
-    maven { url 'https://github.com/felipecsl/m2repository/raw/master/' }
-    // ...
-}
 
 dependencies {
     // ...
-    compile 'com.felipecsl:asymmetricgridview:1.0.+'
+    compile 'com.felipecsl:asymmetricgridview:1.1.0'
 }
 ```
 
