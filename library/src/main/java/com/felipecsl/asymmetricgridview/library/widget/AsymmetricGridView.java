@@ -17,6 +17,7 @@ public class AsymmetricGridView extends ListView {
 
     private static final int DEFAULT_COLUMN_COUNT = 2;
     private static final String TAG = "AsymmetricGridView";
+	private boolean requestedColumnCountCalled = false;
     protected int numColumns = DEFAULT_COLUMN_COUNT;
     protected int requestedHorizontalSpacing;
     protected int requestedColumnWidth;
@@ -90,6 +91,7 @@ public class AsymmetricGridView extends ListView {
 
     public void setRequestedColumnCount(int requestedColumnCount) {
         this.requestedColumnCount = requestedColumnCount;
+	    this.requestedColumnCountCalled = true;
     }
 
     public int getRequestedHorizontalSpacing() {
@@ -158,7 +160,9 @@ public class AsymmetricGridView extends ListView {
         allowReordering = ss.allowReordering;
         debugging = ss.debugging;
         numColumns = ss.numColumns;
-        requestedColumnCount = ss.requestedColumnCount;
+	    if (!requestedColumnCountCalled) {
+		    requestedColumnCount = ss.requestedColumnCount;
+	    }
         requestedColumnWidth = ss.requestedColumnWidth;
         requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
 
