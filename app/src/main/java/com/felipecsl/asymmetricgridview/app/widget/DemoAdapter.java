@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface DemoAdapter extends ListAdapter {
 
-    public void appendItems(List<DemoItem> newItems);
+  void appendItems(List<DemoItem> newItems);
 
-    public void setItems(List<DemoItem> moreItems);
+  void setItems(List<DemoItem> moreItems);
 }

@@ -23,120 +23,122 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
-    private static final String TAG = "MainActivity";
-    private AsymmetricGridView listView;
-    private DemoAdapter adapter;
-    private int currentOffset = 0;
+  private static final String TAG = "MainActivity";
+  private AsymmetricGridView listView;
+  private DemoAdapter adapter;
+  private int currentOffset = 0;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        listView = (AsymmetricGridView) findViewById(R.id.listView);
+  @Override
+  @SuppressWarnings("unchecked")
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    listView = (AsymmetricGridView) findViewById(R.id.listView);
 
-        adapter = new DefaultCursorAdapter(this, getMoreItems(50));
+    adapter = new DefaultCursorAdapter(this, getMoreItems(50));
 //        adapter = new DefaultListAdapter(this, getMoreItems(50));
 
-        listView.setRequestedColumnCount(3);
-        listView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
-        listView.setAdapter(new AsymmetricGridViewAdapter<>(this, listView, adapter));
-        listView.setDebugging(true);
+    listView.setRequestedColumnCount(3);
+    listView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
+    listView.setAdapter(getNewAdapter());
+    listView.setDebugging(true);
+    listView.setOnItemClickListener(this);
+  }
 
-        listView.setOnItemClickListener(this);
+  private AsymmetricGridViewAdapter getNewAdapter() {
+    return new AsymmetricGridViewAdapter<>(this, listView, adapter);
+  }
+
+  private List<DemoItem> getMoreItems(int qty) {
+    final List<DemoItem> items = new ArrayList<>();
+
+    for (int i = 0; i < qty; i++) {
+      int colSpan = Math.random() < 0.2f ? 2 : 1;
+      // Swap the next 2 lines to have items with variable
+      // column/row span.
+      // int rowSpan = Math.random() < 0.2f ? 2 : 1;
+      int rowSpan = colSpan;
+      final DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
+      items.add(item);
     }
 
-    private List<DemoItem> getMoreItems(int qty) {
-        final List<DemoItem> items = new ArrayList<>();
+    currentOffset += qty;
 
-        for (int i = 0; i < qty; i++) {
-            int colSpan = Math.random() < 0.2f ? 2 : 1;
-            // Swap the next 2 lines to have items with variable
-            // column/row span.
-            // int rowSpan = Math.random() < 0.2f ? 2 : 1;
-            int rowSpan = colSpan;
-            final DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
-            items.add(item);
-        }
+    return items;
+  }
 
-        currentOffset += qty;
+  @Override
+  protected void onSaveInstanceState(final Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt("currentOffset", currentOffset);
+  }
 
-        return items;
+  @Override
+  protected void onRestoreInstanceState(@NotNull final Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    currentOffset = savedInstanceState.getInt("currentOffset");
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == R.id.one_column) {
+      setNumColumns(1);
+    } else if (id == R.id.two_columnns) {
+      setNumColumns(2);
+    } else if (id == R.id.three_columns) {
+      setNumColumns(3);
+    } else if (id == R.id.four_columns) {
+      setNumColumns(4);
+    } else if (id == R.id.five_columns) {
+      setNumColumns(5);
+    } else if (id == R.id.onetwenty_dp_columns) {
+      setColumnWidth(120);
+    } else if (id == R.id.twoforty_dp_columns) {
+      setColumnWidth(240);
+    } else if (id == R.id.append_items) {
+      adapter.appendItems(getMoreItems(50));
+    } else if (id == R.id.reset_items) {
+      currentOffset = 0;
+      adapter.setItems(getMoreItems(50));
+    } else if (id == R.id.reordering) {
+      listView.setAllowReordering(!listView.isAllowReordering());
+      item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");
+    } else if (id == R.id.debugging) {
+      int index = listView.getFirstVisiblePosition();
+      View v = listView.getChildAt(0);
+      int top = (v == null) ? 0 : v.getTop();
+
+      listView.setDebugging(!listView.isDebugging());
+      item.setTitle(listView.isDebugging() ? "Disable debugging" : "Enable debugging");
+      listView.setAdapter(adapter);
+
+      listView.setSelectionFromTop(index, top);
     }
+    return super.onOptionsItemSelected(item);
+  }
 
-    @Override
-    protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("currentOffset", currentOffset);
-    }
+  private void setNumColumns(int numColumns) {
+    listView.setRequestedColumnCount(numColumns);
+    listView.determineColumns();
+    listView.setAdapter(getNewAdapter());
+  }
 
-    @Override
-    protected void onRestoreInstanceState(@NotNull final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        currentOffset = savedInstanceState.getInt("currentOffset");
-    }
+  private void setColumnWidth(int columnWidth) {
+    listView.setRequestedColumnWidth(Utils.dpToPx(this, columnWidth));
+    listView.determineColumns();
+    listView.setAdapter(getNewAdapter());
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.one_column) {
-            listView.setRequestedColumnCount(1);
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.two_columnns) {
-            listView.setRequestedColumnCount(2);
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.three_columns) {
-            listView.setRequestedColumnCount(3);
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.four_columns) {
-            listView.setRequestedColumnCount(4);
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.five_columns) {
-            listView.setRequestedColumnCount(5);
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.onetwenty_dp_columns) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 120));
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.twoforty_dp_columns) {
-            listView.setRequestedColumnWidth(Utils.dpToPx(this, 240));
-            listView.determineColumns();
-            listView.setAdapter(adapter);
-        } else if (id == R.id.append_items) {
-            adapter.appendItems(getMoreItems(50));
-        } else if (id == R.id.reset_items) {
-            currentOffset = 0;
-            adapter.setItems(getMoreItems(50));
-        } else if (id == R.id.reordering) {
-            listView.setAllowReordering(!listView.isAllowReordering());
-            item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");
-        } else if (id == R.id.debugging) {
-            int index = listView.getFirstVisiblePosition();
-            View v = listView.getChildAt(0);
-            int top = (v == null) ? 0 : v.getTop();
-
-            listView.setDebugging(!listView.isDebugging());
-            item.setTitle(listView.isDebugging() ? "Disable debugging" : "Enable debugging");
-            listView.setAdapter(adapter);
-
-            listView.setSelectionFromTop(index, top);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
-    }
+  @Override
+  public void onItemClick(@NotNull AdapterView<?> parent, @NotNull View view, int position,
+                          long id) {
+    Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
+  }
 }

@@ -8,54 +8,54 @@ import android.widget.LinearLayout;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class NineLinearLayout extends LinearLayout {
-    private final AnimatorProxy mProxy;
 
-    public NineLinearLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mProxy = AnimatorProxy.NEEDS_PROXY ? AnimatorProxy.wrap(this) : null;
-    }
+  private final AnimatorProxy mProxy;
 
-    @Override
-    public void setVisibility(int visibility) {
-        if (mProxy != null) {
-            if (visibility == GONE) {
-                clearAnimation();
-            } else if (visibility == VISIBLE) {
-                setAnimation(mProxy);
-            }
-        }
-        super.setVisibility(visibility);
-    }
+  public NineLinearLayout(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    mProxy = AnimatorProxy.NEEDS_PROXY ? AnimatorProxy.wrap(this) : null;
+  }
 
-    public float getAlpha() {
-        if (AnimatorProxy.NEEDS_PROXY) {
-            return mProxy.getAlpha();
-        } else {
-            return super.getAlpha();
-        }
+  @Override public void setVisibility(int visibility) {
+    if (mProxy != null) {
+      if (visibility == GONE) {
+        clearAnimation();
+      } else if (visibility == VISIBLE) {
+        setAnimation(mProxy);
+      }
     }
+    super.setVisibility(visibility);
+  }
 
-    public void setAlpha(float alpha) {
-        if (AnimatorProxy.NEEDS_PROXY) {
-            mProxy.setAlpha(alpha);
-        } else {
-            super.setAlpha(alpha);
-        }
+  public float getAlpha() {
+    if (AnimatorProxy.NEEDS_PROXY) {
+      return mProxy.getAlpha();
+    } else {
+      return super.getAlpha();
     }
+  }
 
-    public float getTranslationX() {
-        if (AnimatorProxy.NEEDS_PROXY) {
-            return mProxy.getTranslationX();
-        } else {
-            return super.getTranslationX();
-        }
+  public void setAlpha(float alpha) {
+    if (AnimatorProxy.NEEDS_PROXY) {
+      mProxy.setAlpha(alpha);
+    } else {
+      super.setAlpha(alpha);
     }
+  }
 
-    public void setTranslationX(float translationX) {
-        if (AnimatorProxy.NEEDS_PROXY) {
-            mProxy.setTranslationX(translationX);
-        } else {
-            super.setTranslationX(translationX);
-        }
+  public float getTranslationX() {
+    if (AnimatorProxy.NEEDS_PROXY) {
+      return mProxy.getTranslationX();
+    } else {
+      return super.getTranslationX();
     }
+  }
+
+  public void setTranslationX(float translationX) {
+    if (AnimatorProxy.NEEDS_PROXY) {
+      mProxy.setTranslationX(translationX);
+    } else {
+      super.setTranslationX(translationX);
+    }
+  }
 }

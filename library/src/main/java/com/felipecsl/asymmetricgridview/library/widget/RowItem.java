@@ -3,19 +3,20 @@ package com.felipecsl.asymmetricgridview.library.widget;
 import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 
 public class RowItem<T extends AsymmetricItem> {
-    private final T item;
-    private final int index;
 
-    public RowItem(int index, T item) {
-        this.item = item;
-        this.index = index;
-    }
+  private final T item;
+  private final int index;
 
-    public T getItem() {
-        return item;
-    }
+  public RowItem(int index, T item) {
+    this.item = item;
+    this.index = index;
+  }
 
-    public int getIndex() {
-        return index;
-    }
+  public T getItem() {
+    return item;
+  }
+
+  public int getIndex() {
+    return index;
+  }
 }
