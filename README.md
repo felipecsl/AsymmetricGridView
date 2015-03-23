@@ -1,5 +1,7 @@
 # AsymmetricGridView
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-AsymmetricGridView-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1186)
+
 An Android custom ListView that implements multiple columns and variable sized elements.
 
 Please note that this is currently in a preview state.
@@ -23,14 +25,9 @@ Try out the sample application on [Google Play](https://play.google.com/store/ap
 In your ``build.gradle`` file:
 
 ```groovy
-repositories {
-    maven { url 'https://github.com/felipecsl/m2repository/raw/master/' }
-    // ...
-}
 
 dependencies {
-    // ...
-    compile 'com.felipecsl:asymmetricgridview:1.0.+'
+    compile 'com.felipecsl.asymmetricgridview:library:1.1.0'
 }
 ```
 
