@@ -1,47 +1,62 @@
 package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
-import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-// Sample adapter implementation extending from AsymmetricGridViewAdapter<DemoItem>.
-// This is the easiest way to get started.
-public class DefaultListAdapter extends AsymmetricGridViewAdapter<DemoItem> {
+/**
+ * Sample adapter implementation extending from AsymmetricGridViewAdapter<DemoItem>
+ * This is the easiest way to get started.
+ */
+public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAdapter {
 
-    public DefaultListAdapter(final Context context, final AsymmetricGridView listView, final List<DemoItem> items) {
-        super(context, listView, items);
+  private final LayoutInflater layoutInflater;
+
+  public DefaultListAdapter(Context context, List<DemoItem> items) {
+    super(context, 0, items);
+    layoutInflater = LayoutInflater.from(context);
+  }
+
+  public DefaultListAdapter(Context context) {
+    super(context, 0);
+    layoutInflater = LayoutInflater.from(context);
+  }
+
+  @Override
+  @SuppressWarnings("deprecation")
+  public View getView(int position, View convertView, @NotNull ViewGroup parent) {
+    TextView v;
+
+    DemoItem item = getItem(position);
+
+    if (convertView == null) {
+      v = (TextView) layoutInflater.inflate(R.layout.adapter_item, parent, false);
+    } else {
+      v = (TextView) convertView;
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public View getActualView(final int position, final View convertView, final ViewGroup parent) {
-        TextView v;
+    v.setText(String.valueOf(item.getPosition()));
 
-        DemoItem item = getItem(position);
+    return v;
+  }
 
-        if (convertView == null) {
-            v = new TextView(context);
-            v.setGravity(Gravity.CENTER);
-            v.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.text_view_background_selector));
-            v.setTextColor(Color.parseColor("#ffffff"));
-            v.setTextSize(Utils.dpToPx(context, 18));
-            v.setId(item.getPosition());
-        } else
-            v = (TextView) convertView;
+  public void appendItems(List<DemoItem> newItems) {
+    addAll(newItems);
+    notifyDataSetChanged();
+  }
 
-        v.setText(String.valueOf(item.getPosition()));
-
-        return v;
-    }
+  public void setItems(List<DemoItem> moreItems) {
+    clear();
+    appendItems(moreItems);
+  }
 }

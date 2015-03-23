@@ -36,6 +36,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:support-annotations:22.0.0'
     compile project(path: ':library')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
