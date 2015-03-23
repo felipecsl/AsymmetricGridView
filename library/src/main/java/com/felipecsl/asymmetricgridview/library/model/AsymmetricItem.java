@@ -4,7 +4,7 @@ import android.os.Parcelable;
 
 public interface AsymmetricItem extends Parcelable {
 
-  public int getColumnSpan();
+  int getColumnSpan();
 
-  public int getRowSpan();
+  int getRowSpan();
 }

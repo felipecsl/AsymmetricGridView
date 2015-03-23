@@ -24,7 +24,12 @@ public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAd
 
   public DefaultListAdapter(Context context, List<DemoItem> items) {
     super(context, 0, items);
-    layoutInflater = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+    layoutInflater = LayoutInflater.from(context);
+  }
+
+  public DefaultListAdapter(Context context) {
+    super(context, 0);
+    layoutInflater = LayoutInflater.from(context);
   }
 
   @Override
@@ -35,8 +40,7 @@ public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAd
     DemoItem item = getItem(position);
 
     if (convertView == null) {
-      v = (TextView) layoutInflater.inflate(
-          R.layout.adapter_item, parent, false);
+      v = (TextView) layoutInflater.inflate(R.layout.adapter_item, parent, false);
     } else {
       v = (TextView) convertView;
     }

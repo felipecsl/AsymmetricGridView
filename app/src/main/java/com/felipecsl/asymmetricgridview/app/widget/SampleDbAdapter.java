@@ -17,24 +17,26 @@ import java.util.List;
 public class SampleDbAdapter {
 
   public static final String KEY_TEXT = "text";
-  public static final String KEY_ROW_SPAN = "rowspan";
-  public static final String KEY_COL_SPAN = "colspan";
-  public static final String KEY_ROWID = "_id";
+  private static final String KEY_ROW_SPAN = "rowspan";
+  private static final String KEY_COL_SPAN = "colspan";
+  private static final String KEY_ROWID = "_id";
   private static final String TAG = "CountriesDbAdapter";
-  private DatabaseHelper dbHelper;
-  private SQLiteDatabase database;
-
-  private static final String DATABASE_NAME = "World";
-  private static final String SQLITE_TABLE = "Country";
+  private static final String DATABASE_NAME = "AsymmetricGridViewDemo";
+  private static final String SQLITE_TABLE = "Items";
   private static final int DATABASE_VERSION = 3;
 
-  private final Context mCtx;
+  private DatabaseHelper dbHelper;
+  private SQLiteDatabase database;
+  private final Context context;
 
   private static final String DATABASE_CREATE =
       "CREATE TABLE if not exists " + SQLITE_TABLE + " (" +
       KEY_ROWID + " integer PRIMARY KEY autoincrement," +
       KEY_TEXT + "," + KEY_ROW_SPAN + "," + KEY_COL_SPAN + "," +
       " UNIQUE (" + KEY_TEXT + "));";
+
+  private static final String[] DEFAULT_COLUMNS = new String[]{KEY_ROWID, KEY_TEXT, KEY_ROW_SPAN,
+                                                               KEY_COL_SPAN};
 
   private class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -55,12 +57,12 @@ public class SampleDbAdapter {
     }
   }
 
-  public SampleDbAdapter(Context ctx) {
-    this.mCtx = ctx;
+  public SampleDbAdapter(Context context) {
+    this.context = context;
   }
 
   public SampleDbAdapter open() throws SQLException {
-    dbHelper = new DatabaseHelper(mCtx);
+    dbHelper = new DatabaseHelper(context);
     database = dbHelper.getWritableDatabase();
     return this;
   }
@@ -84,20 +86,15 @@ public class SampleDbAdapter {
     int doneDelete = database.delete(SQLITE_TABLE, null, null);
     Log.w(TAG, Integer.toString(doneDelete));
     return this;
-
   }
 
   public Cursor fetchDataByName(String inputText) throws SQLException {
     Log.w(TAG, inputText);
-    Cursor mCursor = null;
+    Cursor mCursor;
     if (inputText == null || inputText.length() == 0) {
-      mCursor = database.query(SQLITE_TABLE,
-                               new String[]{KEY_ROWID, KEY_TEXT, KEY_ROW_SPAN, KEY_COL_SPAN},
-                               null, null, null, null, null);
-
+      mCursor = getCursor();
     } else {
-      mCursor = database.query(true, SQLITE_TABLE,
-                               new String[]{KEY_ROWID, KEY_TEXT, KEY_ROW_SPAN, KEY_COL_SPAN},
+      mCursor = database.query(true, SQLITE_TABLE, DEFAULT_COLUMNS,
                                KEY_TEXT + " like '%" + inputText + "%'", null, null, null, null,
                                null);
     }
@@ -105,13 +102,10 @@ public class SampleDbAdapter {
       mCursor.moveToFirst();
     }
     return mCursor;
-
   }
 
   public Cursor fetchAllData() {
-    Cursor mCursor = database.query(SQLITE_TABLE,
-                                    new String[]{KEY_ROWID, KEY_TEXT, KEY_ROW_SPAN, KEY_COL_SPAN},
-                                    null, null, null, null, null);
+    Cursor mCursor = getCursor();
 
     if (mCursor != null) {
       mCursor.moveToFirst();
@@ -124,5 +118,9 @@ public class SampleDbAdapter {
       createItem(String.valueOf(item.getPosition()), item.getRowSpan(), item.getColumnSpan());
     }
     return this;
+  }
+
+  private Cursor getCursor() {
+    return database.query(SQLITE_TABLE, DEFAULT_COLUMNS, null, null, null, null, null);
   }
 }

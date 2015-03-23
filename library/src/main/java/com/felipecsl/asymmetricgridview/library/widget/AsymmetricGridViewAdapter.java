@@ -58,7 +58,7 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     wrappedAdapter.registerDataSetObserver(new GridDataSetObserver());
   }
 
-  protected int getRowHeight(final AsymmetricItem item) {
+  protected int getRowHeight(AsymmetricItem item) {
     return getRowHeight(item.getRowSpan());
   }
 
@@ -78,7 +78,7 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     return rowHeight + ((rowSpan - 1) * listView.getDividerHeight());
   }
 
-  protected int getRowWidth(final AsymmetricItem item) {
+  protected int getRowWidth(AsymmetricItem item) {
     return getRowWidth(item.getColumnSpan());
   }
 
@@ -161,34 +161,6 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     return layout;
   }
 
-    /*public Parcelable saveState() {
-        final Bundle bundle = new Bundle();
-        bundle.putInt("totalItems", wrappedAdapter.getCount());
-
-        for (int i = 0; i < wrappedAdapter.getCount(); i++)
-            bundle.putParcelable("item_" + i, (Parcelable) wrappedAdapter.getItem(i));
-
-        return bundle;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void restoreState(final Parcelable state) {
-        final Bundle bundle = (Bundle) state;
-
-        if (bundle != null) {
-            bundle.setClassLoader(getClass().getClassLoader());
-
-            final int totalItems = bundle.getInt("totalItems");
-            final List<T> tmpItems = new ArrayList<>();
-
-            for (int i = 0; i < totalItems; i++)
-                tmpItems.add((T) bundle.getParcelable("item_" + i));
-
-            // will trigger recalculateItemsPerRow()
-            setItems(tmpItems);
-        }
-    }*/
-
   @SuppressWarnings("MagicConstant")
   private IcsLinearLayout findOrInitializeLayout(View convertView) {
     IcsLinearLayout layout;
@@ -236,12 +208,13 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
       }
 
       childLayout.setShowDividers(IcsLinearLayout.SHOW_DIVIDER_MIDDLE);
-      childLayout.setDividerDrawable( context.getResources().getDrawable(
+      childLayout.setDividerDrawable(context.getResources().getDrawable(
           R.drawable.item_divider_vertical));
 
-      childLayout
-          .setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
-                                                        AbsListView.LayoutParams.MATCH_PARENT));
+      childLayout.setLayoutParams(new AbsListView.LayoutParams(
+          AbsListView.LayoutParams.WRAP_CONTENT,
+          AbsListView.LayoutParams.MATCH_PARENT));
+
       parentLayout.addView(childLayout);
     }
 

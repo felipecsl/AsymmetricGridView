@@ -1,6 +1,7 @@
 package com.felipecsl.asymmetricgridview.app;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.app.widget.DefaultCursorAdapter;
+import com.felipecsl.asymmetricgridview.app.widget.DefaultListAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.DemoAdapter;
 import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
@@ -26,7 +28,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
   private static final String TAG = "MainActivity";
   private AsymmetricGridView listView;
   private DemoAdapter adapter;
-  private int currentOffset = 0;
+  private int currentOffset;
+  private static final boolean USE_CURSOR_ADAPTER = false;
 
   @Override
   @SuppressWarnings("unchecked")
@@ -35,8 +38,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     setContentView(R.layout.activity_main);
     listView = (AsymmetricGridView) findViewById(R.id.listView);
 
-    adapter = new DefaultCursorAdapter(this, getMoreItems(50));
-//        adapter = new DefaultListAdapter(this, getMoreItems(50));
+    if (USE_CURSOR_ADAPTER) {
+      if (savedInstanceState == null) {
+        adapter = new DefaultCursorAdapter(this, getMoreItems(50));
+      } else {
+        adapter = new DefaultCursorAdapter(this);
+      }
+    } else {
+      if (savedInstanceState == null) {
+        adapter = new DefaultListAdapter(this, getMoreItems(50));
+      } else {
+        adapter = new DefaultListAdapter(this);
+      }
+    }
 
     listView.setRequestedColumnCount(3);
     listView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
@@ -45,12 +59,12 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     listView.setOnItemClickListener(this);
   }
 
-  private AsymmetricGridViewAdapter getNewAdapter() {
+  private AsymmetricGridViewAdapter<?> getNewAdapter() {
     return new AsymmetricGridViewAdapter<>(this, listView, adapter);
   }
 
   private List<DemoItem> getMoreItems(int qty) {
-    final List<DemoItem> items = new ArrayList<>();
+    List<DemoItem> items = new ArrayList<>();
 
     for (int i = 0; i < qty; i++) {
       int colSpan = Math.random() < 0.2f ? 2 : 1;
@@ -58,7 +72,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
       // column/row span.
       // int rowSpan = Math.random() < 0.2f ? 2 : 1;
       int rowSpan = colSpan;
-      final DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
+      DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
       items.add(item);
     }
 
@@ -67,26 +81,32 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     return items;
   }
 
-  @Override
-  protected void onSaveInstanceState(final Bundle outState) {
+  @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putInt("currentOffset", currentOffset);
+    outState.putInt("itemCount", adapter.getCount());
+    for (int i = 0; i < adapter.getCount(); i++) {
+      outState.putParcelable("item_" + i, (Parcelable) adapter.getItem(i));
+    }
   }
 
-  @Override
-  protected void onRestoreInstanceState(@NotNull final Bundle savedInstanceState) {
+  @Override protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
     currentOffset = savedInstanceState.getInt("currentOffset");
+    int count = savedInstanceState.getInt("itemCount");
+    List<DemoItem> items = new ArrayList<>(count);
+    for (int i = 0; i < count; i++) {
+      items.add((DemoItem) savedInstanceState.getParcelable("item_" + i));
+    }
+    adapter.setItems(items);
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main, menu);
     return true;
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     if (id == R.id.one_column) {
       setNumColumns(1);
@@ -136,9 +156,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     listView.setAdapter(getNewAdapter());
   }
 
-  @Override
-  public void onItemClick(@NotNull AdapterView<?> parent, @NotNull View view, int position,
-                          long id) {
+  @Override public void onItemClick(@NotNull AdapterView<?> parent, @NotNull View view,
+                                    int position, long id) {
     Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
   }
 }
