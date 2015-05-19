@@ -22,12 +22,15 @@ Try out the sample application on [Google Play](https://play.google.com/store/ap
 
 ### Usage
 
+Version 2.0.0 includes a major breaking change to the AsymmetricGridViewAdapter. You now provide
+your own adapter to the AsymmetricGridViewAdapter constructor instead of extending it.
+
 In your ``build.gradle`` file:
 
 ```groovy
 
 dependencies {
-    compile 'com.felipecsl.asymmetricgridview:library:1.1.0'
+    compile 'com.felipecsl.asymmetricgridview:library:2.0.0'
 }
 ```
 
@@ -56,21 +59,14 @@ protected void onCreate(Bundle savedInstanceState) {
 
     // initialize your items array
     adapter = new ListAdapter(this, listView, items);
-
-    listView.setAdapter(adapter);
+    AsymmetricGridViewAdapter asymmetricAdapter =
+        new AsymmetricGridViewAdapter<>(this, listView, adapter);
+    listView.setAdapter(asymmetricAdapter);
 }
 ```
 
-Supports resetting and appending more elements into the adapter:
-
-```java
-// Will append more items at the end of the adapter.
-listView.getAdapter().appendItems(moreItems);
-
-// resetting the adapter items. Will clear the adapter
-// and add the new items.
-listView.getAdapter().setItems(items);
-```
+Whenever your adapter changes (add or remove items), the grid will automatically reflect those
+changes by subscribing to your adapter changes.
 
 Toggle to enable/disable reordering of elements to better fill the grid
 
