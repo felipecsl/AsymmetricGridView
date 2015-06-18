@@ -5,6 +5,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAdapter
+public final class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAdapter
     implements View.OnClickListener, View.OnLongClickListener, WrapperListAdapter {
 
-  private static final String TAG = "AsymmetricGridViewAdptr";
-  protected final AsymmetricGridView listView;
-  protected final Context context;
-  protected final ListAdapter wrappedAdapter;
-
-  private Map<Integer, RowInfo<T>> itemsPerRow = new HashMap<>();
-  private final ViewPool<IcsLinearLayout> linearLayoutPool;
-  private final ViewPool<View> viewPool = new ViewPool<>();
+  private static final String TAG = AsymmetricGridViewAdapter.class.getSimpleName();
+  private final AsymmetricGridView listView;
+  private final Context context;
+  private final ListAdapter wrappedAdapter;
+  private final Map<Integer, RowInfo<T>> itemsPerRow = new HashMap<>();
+  private final ObjectPool<IcsLinearLayout> linearLayoutPool;
+  private final ObjectPool<View> objectPool = new ObjectPool<>();
+  private final Map<Integer, ObjectPool<View>> convertViewMap = new ArrayMap<>();
   private ProcessRowsTask asyncTask;
 
   class GridDataSetObserver extends DataSetObserver {
@@ -50,11 +51,10 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
 
   public AsymmetricGridViewAdapter(Context context, AsymmetricGridView listView,
                                    ListAdapter adapter) {
-    this.linearLayoutPool = new ViewPool<>(new LinearLayoutPoolObjectFactory(context));
+    this.linearLayoutPool = new ObjectPool<>(new LinearLayoutPoolObjectFactory(context));
     this.wrappedAdapter = adapter;
     this.context = context;
     this.listView = listView;
-
     wrappedAdapter.registerDataSetObserver(new GridDataSetObserver());
   }
 
@@ -97,23 +97,16 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     }
 
     RowInfo<T> rowInfo = itemsPerRow.get(position);
-    List<RowItem<T>> rowItems = new ArrayList<>();
     if (rowInfo == null) {
       return convertView;
     }
 
-    rowItems.addAll(rowInfo.getItems());
-
+    List<RowItem<T>> rowItems = new ArrayList<>(rowInfo.getItems());
     LinearLayout layout = findOrInitializeLayout(convertView);
-
-    // Index to control the current position
-    // of the current column in this row
+    // Index to control the current position of the current column in this row
     int columnIndex = 0;
-
-    // Index to control the current position
-    // in the array of all the items available for this row
+    // Index to control the current position in the array of all the items available for this row
     int currentIndex = 0;
-
     int spaceLeftInColumn = rowInfo.getRowHeight();
 
     while (!rowItems.isEmpty() && columnIndex < listView.getNumColumns()) {
@@ -131,20 +124,25 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
       if (spaceLeftInColumn >= currentItem.getItem().getRowSpan()) {
         rowItems.remove(currentItem);
 
-        LinearLayout childLayout = findOrInitializeChildLayout(layout, columnIndex);
-        View childConvertView = viewPool.get();
-        View v = wrappedAdapter.getView(currentItem.getIndex(), childConvertView, parent);
-        v.setTag(currentItem);
-        v.setOnClickListener(this);
-        v.setOnLongClickListener(this);
+        int actualIndex = currentItem.getIndex();
+        ObjectPool<View> pool = convertViewMap.get(wrappedAdapter.getItemViewType(actualIndex));
+        if (pool == null) {
+          pool = new ObjectPool<>();
+          convertViewMap.put(actualIndex, pool);
+        }
+        View view = wrappedAdapter.getView(actualIndex, pool.get(), parent);
+        view.setTag(currentItem);
+        view.setOnClickListener(this);
+        view.setOnLongClickListener(this);
 
         spaceLeftInColumn -= currentItem.getItem().getRowSpan();
         currentIndex = 0;
 
-        v.setLayoutParams(new LinearLayout.LayoutParams(getRowWidth(currentItem.getItem()),
-                                                        getRowHeight(currentItem.getItem())));
+        view.setLayoutParams(new LinearLayout.LayoutParams(getRowWidth(currentItem.getItem()),
+            getRowHeight(currentItem.getItem())));
 
-        childLayout.addView(v);
+        LinearLayout childLayout = findOrInitializeChildLayout(layout, columnIndex);
+        childLayout.addView(view);
       } else if (currentIndex < rowItems.size() - 1) {
         // Try again with next item
         currentIndex++;
@@ -155,13 +153,12 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
 
     if (listView.isDebugging() && position % 20 == 0) {
       Log.d(TAG, linearLayoutPool.getStats("LinearLayout"));
-      Log.d(TAG, viewPool.getStats("Views"));
+      Log.d(TAG, objectPool.getStats("Views"));
     }
 
     return layout;
   }
 
-  @SuppressWarnings("MagicConstant")
   private IcsLinearLayout findOrInitializeLayout(View convertView) {
     IcsLinearLayout layout;
 
@@ -171,12 +168,14 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
         layout.setBackgroundColor(Color.parseColor("#83F27B"));
       }
 
+      //noinspection ResourceType
       layout.setShowDividers(IcsLinearLayout.SHOW_DIVIDER_MIDDLE);
       layout.setDividerDrawable(
           context.getResources().getDrawable(R.drawable.item_divider_horizontal));
 
-      layout.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                                                          AbsListView.LayoutParams.WRAP_CONTENT));
+      AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(
+          AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT);
+      layout.setLayoutParams(layoutParams);
     } else {
       layout = (IcsLinearLayout) convertView;
     }
@@ -186,7 +185,7 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
       IcsLinearLayout tempChild = (IcsLinearLayout) layout.getChildAt(j);
       linearLayoutPool.put(tempChild);
       for (int k = 0; k < tempChild.getChildCount(); k++) {
-        viewPool.put(tempChild.getChildAt(k));
+        objectPool.put(tempChild.getChildAt(k));
       }
       tempChild.removeAllViews();
     }
@@ -195,15 +194,6 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     return layout;
   }
 
-  @Override public int getViewTypeCount() {
-    return wrappedAdapter.getViewTypeCount();
-  }
-
-  @Override public int getItemViewType(int position) {
-    return wrappedAdapter.getItemViewType(position);
-  }
-
-  @SuppressWarnings("MagicConstant")
   private IcsLinearLayout findOrInitializeChildLayout(LinearLayout parentLayout, int childIndex) {
     IcsLinearLayout childLayout = (IcsLinearLayout) parentLayout.getChildAt(childIndex);
 
@@ -215,6 +205,7 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
         childLayout.setBackgroundColor(Color.parseColor("#837BF2"));
       }
 
+      //noinspection ResourceType
       childLayout.setShowDividers(IcsLinearLayout.SHOW_DIVIDER_MIDDLE);
       childLayout.setDividerDrawable(context.getResources().getDrawable(
           R.drawable.item_divider_vertical));
@@ -259,7 +250,7 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     }
 
     linearLayoutPool.clear();
-    viewPool.clear();
+    objectPool.clear();
     itemsPerRow.clear();
 
     asyncTask = new ProcessRowsTask();
@@ -360,5 +351,4 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
       return rows;
     }
   }
-
 }

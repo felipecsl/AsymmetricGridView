@@ -63,7 +63,7 @@ public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAd
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? 1 : 0;
+    return position % 2 == 0 ? 1 : 0;
   }
 
   public void appendItems(List<DemoItem> newItems) {
