@@ -2,7 +2,7 @@ package com.felipecsl.asymmetricgridview.app;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
   private static final String TAG = "MainActivity";
   private AsymmetricGridView listView;
@@ -32,7 +32,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
   private static final boolean USE_CURSOR_ADAPTER = false;
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
@@ -157,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
   }
 
   @Override public void onItemClick(@NotNull AdapterView<?> parent, @NotNull View view,
-                                    int position, long id) {
+      int position, long id) {
     Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
   }
 }

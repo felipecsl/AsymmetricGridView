@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Sample adapter implementation extending from AsymmetricGridViewAdapter<DemoItem>
- * This is the easiest way to get started.
+ * Sample adapter implementation extending from AsymmetricGridViewAdapter<DemoItem> This is the
+ * easiest way to get started.
  */
 public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAdapter {
 
@@ -33,21 +33,37 @@ public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAd
   }
 
   @Override
-  @SuppressWarnings("deprecation")
   public View getView(int position, View convertView, @NotNull ViewGroup parent) {
-    TextView v;
+    View v;
 
     DemoItem item = getItem(position);
+    boolean isRegular = getItemViewType(position) == 0;
 
     if (convertView == null) {
-      v = (TextView) layoutInflater.inflate(R.layout.adapter_item, parent, false);
+      v = layoutInflater.inflate(
+          isRegular ? R.layout.adapter_item : R.layout.adapter_item_odd, parent, false);
     } else {
-      v = (TextView) convertView;
+      v = convertView;
     }
 
-    v.setText(String.valueOf(item.getPosition()));
+    TextView textView;
+    if (isRegular) {
+      textView = (TextView) v.findViewById(R.id.textview);
+    } else {
+      textView = (TextView) v.findViewById(R.id.textview_odd);
+    }
+
+    textView.setText(String.valueOf(item.getPosition()));
 
     return v;
+  }
+
+  @Override public int getViewTypeCount() {
+    return 2;
+  }
+
+  @Override public int getItemViewType(int position) {
+    return position % 3 == 0 ? 1 : 0;
   }
 
   public void appendItems(List<DemoItem> newItems) {

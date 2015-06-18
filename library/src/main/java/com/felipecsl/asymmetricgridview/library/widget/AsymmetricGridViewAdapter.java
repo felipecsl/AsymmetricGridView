@@ -96,8 +96,8 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
       Log.d(TAG, "getView(" + String.valueOf(position) + ")");
     }
 
-    final RowInfo<T> rowInfo = itemsPerRow.get(position);
-    final List<RowItem<T>> rowItems = new ArrayList<>();
+    RowInfo<T> rowInfo = itemsPerRow.get(position);
+    List<RowItem<T>> rowItems = new ArrayList<>();
     if (rowInfo == null) {
       return convertView;
     }
@@ -117,7 +117,7 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     int spaceLeftInColumn = rowInfo.getRowHeight();
 
     while (!rowItems.isEmpty() && columnIndex < listView.getNumColumns()) {
-      final RowItem<T> currentItem = rowItems.get(currentIndex);
+      RowItem<T> currentItem = rowItems.get(currentIndex);
 
       if (spaceLeftInColumn == 0) {
         // No more space in this column. Move to next one
@@ -131,9 +131,9 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
       if (spaceLeftInColumn >= currentItem.getItem().getRowSpan()) {
         rowItems.remove(currentItem);
 
-        final LinearLayout childLayout = findOrInitializeChildLayout(layout, columnIndex);
-        final View childConvertView = viewPool.get();
-        final View v = wrappedAdapter.getView(currentItem.getIndex(), childConvertView, parent);
+        LinearLayout childLayout = findOrInitializeChildLayout(layout, columnIndex);
+        View childConvertView = viewPool.get();
+        View v = wrappedAdapter.getView(currentItem.getIndex(), childConvertView, parent);
         v.setTag(currentItem);
         v.setOnClickListener(this);
         v.setOnLongClickListener(this);
@@ -193,6 +193,14 @@ public class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAda
     layout.removeAllViews();
 
     return layout;
+  }
+
+  @Override public int getViewTypeCount() {
+    return wrappedAdapter.getViewTypeCount();
+  }
+
+  @Override public int getItemViewType(int position) {
+    return wrappedAdapter.getItemViewType(position);
   }
 
   @SuppressWarnings("MagicConstant")

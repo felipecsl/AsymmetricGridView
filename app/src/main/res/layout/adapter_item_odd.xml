@@ -1,9 +1,8 @@
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/textview"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textview_odd"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/text_view_background_selector"
     android:gravity="center"
-    android:textColor="#fff"
+    android:textColor="#0f0"
     android:textSize="18sp" />

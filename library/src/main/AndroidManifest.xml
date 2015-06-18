@@ -1,8 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.felipecsl.asymmetricgridview.library">
+<manifest package="com.felipecsl.asymmetricgridview.library">
 
-    <application android:label="@string/app_name">
-
-    </application>
+    <application />
 
 </manifest>

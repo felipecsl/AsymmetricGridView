@@ -16,14 +16,14 @@ public class DefaultCursorAdapter extends SimpleCursorAdapter implements DemoAda
   public DefaultCursorAdapter(Context context, List<DemoItem> items) {
     super(context, R.layout.adapter_item,
           new SampleDbAdapter(context).open().deleteAllData().seedDatabase(items).fetchAllData(),
-          new String[]{SampleDbAdapter.KEY_TEXT}, new int[]{R.id.text}, 0);
+          new String[]{SampleDbAdapter.KEY_TEXT}, new int[]{R.id.textview}, 0);
 
     this.context = context;
   }
 
   public DefaultCursorAdapter(Context context) {
     super(context, R.layout.adapter_item, new SampleDbAdapter(context).open().fetchAllData(),
-          new String[]{SampleDbAdapter.KEY_TEXT}, new int[]{R.id.text}, 0);
+          new String[]{SampleDbAdapter.KEY_TEXT}, new int[]{R.id.textview}, 0);
 
     this.context = context;
   }
