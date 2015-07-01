@@ -1,3 +1,9 @@
+# 2.0.1
+
+* Removes unused ic_launcher images from library code which caused build issues with latest
+build tools
+* Adds support for multiple itemViewTypes on AsymmetricGridViewAdapter (issue #30)
+
 # 2.0.0
 
 * `AsymmetricGridViewAdapter` received a major refactoring. It now doesn't keep track of the ListView
