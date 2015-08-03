@@ -51,10 +51,9 @@ protected void onCreate(Bundle savedInstanceState) {
     final List<AsymmetricItem> items = new ArrayList<>();
 
     // initialize your items array
-    adapter = new ListAdapter(this, listView, items);
-    AsymmetricGridViewAdapter asymmetricAdapter =
-        new AsymmetricGridViewAdapter<>(this, listView, adapter);
-    listView.setAdapter(asymmetricAdapter);
+    adapter = new ListAdapter(this);
+    adapter.addItems( items );
+    listView.setAdapter(adapter);
 }
 ```
 
