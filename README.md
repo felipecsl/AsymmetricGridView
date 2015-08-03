@@ -51,8 +51,7 @@ protected void onCreate(Bundle savedInstanceState) {
     final List<AsymmetricItem> items = new ArrayList<>();
 
     // initialize your items array
-    adapter = new ListAdapter(this);
-    adapter.addItems( items );
+    adapter = new ListAdapter(this, items);
     listView.setAdapter(adapter);
 }
 ```
