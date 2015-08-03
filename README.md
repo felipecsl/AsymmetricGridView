@@ -25,9 +25,9 @@ Try out the sample application on [Google Play](https://play.google.com/store/ap
 Version 2.0.0 includes a major breaking change to the AsymmetricGridViewAdapter. You now provide
 your own adapter to the AsymmetricGridViewAdapter constructor instead of extending it.
 
-In your ```build.gradle``` file:
+In your ``build.gradle`` file:
 
-```java
+```groovy
 dependencies {
     compile 'com.felipecsl.asymmetricgridview:library:2.0.1'
 }
