@@ -15,7 +15,6 @@ import com.felipecsl.asymmetricgridview.library.Utils;
 public class AsymmetricGridView extends ListView {
 
   private static final int DEFAULT_COLUMN_COUNT = 2;
-  private static final String TAG = "AsymmetricGridView";
   protected int numColumns = DEFAULT_COLUMN_COUNT;
   protected int requestedHorizontalSpacing;
   protected int requestedColumnWidth;
@@ -34,7 +33,8 @@ public class AsymmetricGridView extends ListView {
     final ViewTreeObserver vto = getViewTreeObserver();
     if (vto != null) {
       vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override @SuppressWarnings("deprecation") public void onGlobalLayout() {
+        @Override public void onGlobalLayout() {
+          //noinspection deprecation
           getViewTreeObserver().removeGlobalOnLayoutListener(this);
           determineColumns();
           if (gridAdapter != null) {
@@ -133,9 +133,6 @@ public class AsymmetricGridView extends ListView {
     ss.requestedColumnWidth = requestedColumnWidth;
     ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
 
-//        if (gridAdapter != null)
-//            ss.adapterState = gridAdapter.saveState();
-
     return ss;
   }
 
@@ -155,9 +152,6 @@ public class AsymmetricGridView extends ListView {
     requestedColumnCount = ss.requestedColumnCount;
     requestedColumnWidth = ss.requestedColumnWidth;
     requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
-
-//        if (gridAdapter != null)
-//            gridAdapter.restoreState(ss.adapterState);
 
     setSelectionFromTop(20, 0);
   }

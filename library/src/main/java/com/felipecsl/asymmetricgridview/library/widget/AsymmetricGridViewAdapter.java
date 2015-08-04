@@ -221,15 +221,15 @@ public final class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends B
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void onClick(@NonNull View v) {
+    // noinspection unchecked
     RowItem<T> rowItem = (RowItem<T>) v.getTag();
     listView.fireOnItemClick(rowItem.getIndex(), v);
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public boolean onLongClick(@NonNull View v) {
+    // noinspection unchecked
     RowItem<T> rowItem = (RowItem<T>) v.getTag();
     return listView.fireOnItemLongClick(rowItem.getIndex(), v);
   }
@@ -243,7 +243,6 @@ public final class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends B
     return itemsPerRow.size();
   }
 
-  @SuppressWarnings("unchecked")
   public void recalculateItemsPerRow() {
     if (asyncTask != null) {
       asyncTask.cancel(true);

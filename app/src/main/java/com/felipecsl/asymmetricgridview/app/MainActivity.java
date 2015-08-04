@@ -2,7 +2,12 @@ package com.felipecsl.asymmetricgridview.app;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,13 +34,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
   private AsymmetricGridView listView;
   private DemoAdapter adapter;
   private int currentOffset;
+  private DrawerLayout drawerLayout;
   private static final boolean USE_CURSOR_ADAPTER = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     listView = (AsymmetricGridView) findViewById(R.id.listView);
+
+    setSupportActionBar(toolbar);
+
+    ActionBar actionBar = getSupportActionBar();
+    actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+    actionBar.setDisplayHomeAsUpEnabled(true);
+
+    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    if (navigationView != null) {
+      setupDrawerContent(navigationView);
+    }
 
     if (USE_CURSOR_ADAPTER) {
       if (savedInstanceState == null) {
@@ -56,6 +76,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     listView.setAdapter(getNewAdapter());
     listView.setDebugging(true);
     listView.setOnItemClickListener(this);
+  }
+
+  private void setupDrawerContent(NavigationView navigationView) {
+    navigationView.setNavigationItemSelectedListener(
+        new NavigationView.OnNavigationItemSelectedListener() {
+          @Override public boolean onNavigationItemSelected(MenuItem menuItem) {
+            menuItem.setChecked(true);
+            drawerLayout.closeDrawers();
+            return true;
+          }
+        });
   }
 
   private AsymmetricGridViewAdapter<?> getNewAdapter() {
@@ -139,6 +170,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       listView.setAdapter(adapter);
 
       listView.setSelectionFromTop(index, top);
+    } else if (id == android.R.id.home) {
+      drawerLayout.openDrawer(GravityCompat.START);
     }
     return super.onOptionsItemSelected(item);
   }

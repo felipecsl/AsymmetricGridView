@@ -7,7 +7,7 @@ android {
     defaultConfig {
         versionCode 25
         versionName "2.0.0"
-        minSdkVersion 4
+        minSdkVersion 7
     }
 
     compileOptions {
@@ -24,8 +24,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:support-annotations:22.2.0'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:support-annotations:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
 }
 
 apply from: 'gradle-mvn-push.gradle'
