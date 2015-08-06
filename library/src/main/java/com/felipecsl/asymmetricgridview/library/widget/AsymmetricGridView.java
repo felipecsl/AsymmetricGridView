@@ -67,7 +67,7 @@ public class AsymmetricGridView extends ListView {
   @Override
   public void setAdapter(@NonNull ListAdapter adapter)
   {
-    gridAdapter = new AsymmetricGridViewAdapter( getContext() , adapter );
+    gridAdapter = ( adapter instanceof AsymmetricGridViewAdapter ) ? (AsymmetricGridViewAdapter) adapter : new AsymmetricGridViewAdapter( getContext() , adapter );
     gridAdapter.setListView( this );
 
     super.setAdapter(gridAdapter);
