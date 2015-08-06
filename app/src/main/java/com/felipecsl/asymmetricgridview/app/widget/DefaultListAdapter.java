@@ -75,4 +75,9 @@ public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAd
     clear();
     appendItems(moreItems);
   }
+
+  @Override
+  public void remove(int position) {
+    super.remove( getItem(position) );
+  }
 }

@@ -65,15 +65,12 @@ public class AsymmetricGridView extends ListView {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  public void setAdapter(@NonNull ListAdapter adapter) {
-    if (!(adapter instanceof AsymmetricGridViewAdapter)) {
-      throw new UnsupportedOperationException(
-          "Adapter must be an instance of AsymmetricGridViewAdapter");
-    }
+  public void setAdapter(@NonNull ListAdapter adapter)
+  {
+    gridAdapter = new AsymmetricGridViewAdapter( getContext() , adapter );
+    gridAdapter.setListView( this );
 
-    gridAdapter = (AsymmetricGridViewAdapter) adapter;
-    super.setAdapter(adapter);
+    super.setAdapter(gridAdapter);
 
     gridAdapter.recalculateItemsPerRow();
   }

@@ -3,6 +3,7 @@ package com.felipecsl.asymmetricgridview.app.widget;
 import android.content.Context;
 import android.database.sqlite.SQLiteCursor;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
@@ -46,6 +47,11 @@ public class DefaultCursorAdapter extends SimpleCursorAdapter implements DemoAda
   @Override public void setItems(List<DemoItem> moreItems) {
     swapCursor(new SampleDbAdapter(context).open().deleteAllData().seedDatabase(moreItems)
                    .fetchAllData());
+  }
+
+  @Override
+  public void remove(int position) {
+    Log.d("z", "wut?");
   }
 
   public static class CursorAdapterItem extends DemoItem {

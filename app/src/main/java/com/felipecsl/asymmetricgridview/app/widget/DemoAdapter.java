@@ -11,4 +11,6 @@ public interface DemoAdapter extends ListAdapter {
   void appendItems(List<DemoItem> newItems);
 
   void setItems(List<DemoItem> moreItems);
+
+  void remove(int position);
 }

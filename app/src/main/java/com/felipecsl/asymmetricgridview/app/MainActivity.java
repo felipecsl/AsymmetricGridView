@@ -15,7 +15,6 @@ import com.felipecsl.asymmetricgridview.app.widget.DefaultListAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.DemoAdapter;
 import com.felipecsl.asymmetricgridview.library.Utils;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
   private static final boolean USE_CURSOR_ADAPTER = false;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState)
+  {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     listView = (AsymmetricGridView) findViewById(R.id.listView);
@@ -53,14 +53,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     listView.setRequestedColumnCount(3);
     listView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
-    listView.setAdapter(getNewAdapter());
+    listView.setAdapter( adapter );
     listView.setDebugging(true);
     listView.setOnItemClickListener(this);
   }
 
-  private AsymmetricGridViewAdapter<?> getNewAdapter() {
-    return new AsymmetricGridViewAdapter<>(this, listView, adapter);
-  }
 
   private List<DemoItem> getMoreItems(int qty) {
     List<DemoItem> items = new ArrayList<>();
@@ -146,17 +143,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
   private void setNumColumns(int numColumns) {
     listView.setRequestedColumnCount(numColumns);
     listView.determineColumns();
-    listView.setAdapter(getNewAdapter());
+    listView.setAdapter(adapter);
   }
 
   private void setColumnWidth(int columnWidth) {
     listView.setRequestedColumnWidth(Utils.dpToPx(this, columnWidth));
     listView.determineColumns();
-    listView.setAdapter(getNewAdapter());
+    listView.setAdapter(adapter);
   }
 
   @Override public void onItemClick(@NotNull AdapterView<?> parent, @NotNull View view,
       int position, long id) {
     Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
+
+      adapter.remove( position );
   }
 }

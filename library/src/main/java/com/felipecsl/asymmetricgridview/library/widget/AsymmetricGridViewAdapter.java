@@ -26,10 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 public final class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends BaseAdapter
-    implements View.OnClickListener, View.OnLongClickListener, WrapperListAdapter {
+  implements View.OnClickListener, View.OnLongClickListener, WrapperListAdapter
+  {
 
   private static final String TAG = AsymmetricGridViewAdapter.class.getSimpleName();
-  private final AsymmetricGridView listView;
+  private AsymmetricGridView listView;
   private final Context context;
   private final ListAdapter wrappedAdapter;
   private final Map<Integer, RowInfo<T>> itemsPerRow = new HashMap<>();
@@ -49,13 +50,16 @@ public final class AsymmetricGridViewAdapter<T extends AsymmetricItem> extends B
     }
   }
 
-  public AsymmetricGridViewAdapter(Context context, AsymmetricGridView listView,
-                                   ListAdapter adapter) {
+  public AsymmetricGridViewAdapter(Context context, ListAdapter adapter) {
     this.linearLayoutPool = new ObjectPool<>(new LinearLayoutPoolObjectFactory(context));
     this.wrappedAdapter = adapter;
     this.context = context;
-    this.listView = listView;
     wrappedAdapter.registerDataSetObserver(new GridDataSetObserver());
+  }
+
+  public void setListView( AsymmetricGridView listView )
+  {
+    this.listView = listView;
   }
 
   protected int getRowHeight(AsymmetricItem item) {
