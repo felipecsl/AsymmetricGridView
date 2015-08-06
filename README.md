@@ -28,11 +28,12 @@ your own adapter to the AsymmetricGridViewAdapter constructor instead of extendi
 In your ``build.gradle`` file:
 
 ```groovy
-
 dependencies {
     compile 'com.felipecsl.asymmetricgridview:library:2.0.1'
 }
 ```
+
+This repository has a new feature. Instead of explicitly wrapping your adapter in the AsymmetricGridViewAdapter you simply call AsymmetricGridView.setAdapter( adapter ) with any old adapter and then it is wrapped and linked under the hood. This constructors are also more consistent with what an Android developer might expect.
 
 In your layout xml:
 
@@ -58,10 +59,8 @@ protected void onCreate(Bundle savedInstanceState) {
     final List<AsymmetricItem> items = new ArrayList<>();
 
     // initialize your items array
-    adapter = new ListAdapter(this, listView, items);
-    AsymmetricGridViewAdapter asymmetricAdapter =
-        new AsymmetricGridViewAdapter<>(this, listView, adapter);
-    listView.setAdapter(asymmetricAdapter);
+    adapter = new ListAdapter(this, items);
+    listView.setAdapter(adapter);
 }
 ```
 
