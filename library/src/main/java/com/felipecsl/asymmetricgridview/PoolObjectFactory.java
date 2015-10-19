@@ -1,4 +1,4 @@
-package com.felipecsl.asymmetricgridview.library.widget;
+package com.felipecsl.asymmetricgridview;
 
 public interface PoolObjectFactory<T> {
   T createObject();

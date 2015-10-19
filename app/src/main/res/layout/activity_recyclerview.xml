@@ -27,7 +27,7 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <com.felipecsl.asymmetricgridview.library.widget.AsymmetricRecyclerView
+        <com.felipecsl.asymmetricgridview.AsymmetricRecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

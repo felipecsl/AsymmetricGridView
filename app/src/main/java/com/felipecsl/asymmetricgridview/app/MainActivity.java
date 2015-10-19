@@ -1,5 +1,6 @@
 package com.felipecsl.asymmetricgridview.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.NavigationView;
@@ -14,13 +15,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.felipecsl.asymmetricgridview.AsymmetricGridView;
+import com.felipecsl.asymmetricgridview.AsymmetricGridViewAdapter;
+import com.felipecsl.asymmetricgridview.Utils;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import com.felipecsl.asymmetricgridview.app.widget.DefaultCursorAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.DefaultListAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.DemoAdapter;
-import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,13 +30,11 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
-  private static final String TAG = "MainActivity";
+  private static final boolean USE_CURSOR_ADAPTER = false;
   private AsymmetricGridView listView;
   private DemoAdapter adapter;
-  private int currentOffset;
   private DrawerLayout drawerLayout;
-  private static final boolean USE_CURSOR_ADAPTER = false;
+  private final DemoUtils demoUtils = new DemoUtils();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +58,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     if (USE_CURSOR_ADAPTER) {
       if (savedInstanceState == null) {
-        adapter = new DefaultCursorAdapter(this, getMoreItems(50));
+        adapter = new DefaultCursorAdapter(this, demoUtils.moarItems(50));
       } else {
         adapter = new DefaultCursorAdapter(this);
       }
     } else {
       if (savedInstanceState == null) {
-        adapter = new DefaultListAdapter(this, getMoreItems(50));
+        adapter = new DefaultListAdapter(this, demoUtils.moarItems(50));
       } else {
         adapter = new DefaultListAdapter(this);
       }
@@ -84,36 +83,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
           @Override public boolean onNavigationItemSelected(MenuItem menuItem) {
             menuItem.setChecked(true);
             drawerLayout.closeDrawers();
+            switch (menuItem.getItemId()) {
+              case R.id.nav_gridview:
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                finish();
+                break;
+              case R.id.nav_recyclerview:
+                startActivity(new Intent(MainActivity.this, RecyclerViewActivity.class));
+                finish();
+                break;
+            }
             return true;
           }
         });
   }
 
-  private AsymmetricGridViewAdapter<?> getNewAdapter() {
-    return new AsymmetricGridViewAdapter<>(this, listView, adapter);
-  }
-
-  private List<DemoItem> getMoreItems(int qty) {
-    List<DemoItem> items = new ArrayList<>();
-
-    for (int i = 0; i < qty; i++) {
-      int colSpan = Math.random() < 0.2f ? 2 : 1;
-      // Swap the next 2 lines to have items with variable
-      // column/row span.
-      // int rowSpan = Math.random() < 0.2f ? 2 : 1;
-      int rowSpan = colSpan;
-      DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
-      items.add(item);
-    }
-
-    currentOffset += qty;
-
-    return items;
+  private AsymmetricGridViewAdapter getNewAdapter() {
+    return new AsymmetricGridViewAdapter(this, listView, adapter);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putInt("currentOffset", currentOffset);
+    outState.putInt("currentOffset", demoUtils.currentOffset);
     outState.putInt("itemCount", adapter.getCount());
     for (int i = 0; i < adapter.getCount(); i++) {
       outState.putParcelable("item_" + i, (Parcelable) adapter.getItem(i));
@@ -122,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
   @Override protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
-    currentOffset = savedInstanceState.getInt("currentOffset");
+    demoUtils.currentOffset = savedInstanceState.getInt("currentOffset");
     int count = savedInstanceState.getInt("itemCount");
     List<DemoItem> items = new ArrayList<>(count);
     for (int i = 0; i < count; i++) {
@@ -153,10 +144,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     } else if (id == R.id.twoforty_dp_columns) {
       setColumnWidth(240);
     } else if (id == R.id.append_items) {
-      adapter.appendItems(getMoreItems(50));
+      adapter.appendItems(demoUtils.moarItems(50));
     } else if (id == R.id.reset_items) {
-      currentOffset = 0;
-      adapter.setItems(getMoreItems(50));
+      demoUtils.currentOffset = 0;
+      adapter.setItems(demoUtils.moarItems(50));
     } else if (id == R.id.reordering) {
       listView.setAllowReordering(!listView.isAllowReordering());
       item.setTitle(listView.isAllowReordering() ? "Prevent reordering" : "Allow reordering");

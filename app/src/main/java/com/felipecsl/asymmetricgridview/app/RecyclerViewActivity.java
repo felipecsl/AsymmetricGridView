@@ -1,7 +1,9 @@
 package com.felipecsl.asymmetricgridview.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,16 +14,17 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.felipecsl.asymmetricgridview.AGVRecyclerViewAdapter;
+import com.felipecsl.asymmetricgridview.AsymmetricItem;
+import com.felipecsl.asymmetricgridview.AsymmetricRecyclerView;
+import com.felipecsl.asymmetricgridview.AsymmetricRecyclerViewAdapter;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricRecyclerView;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricRecyclerViewAdapter;
 
-import java.util.Collections;
 import java.util.List;
 
 public class RecyclerViewActivity extends AppCompatActivity {
   private DrawerLayout drawerLayout;
-  private AsymmetricRecyclerView recyclerView;
+  private final DemoUtils demoUtils = new DemoUtils();
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -29,7 +32,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    recyclerView = (AsymmetricRecyclerView) findViewById(R.id.recyclerView);
+    AsymmetricRecyclerView recyclerView = (AsymmetricRecyclerView) findViewById(R.id.recyclerView);
 
     setSupportActionBar(toolbar);
 
@@ -42,7 +45,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
       setupDrawerContent(navigationView);
     }
 
-    RecyclerViewAdapter adapter = new RecyclerViewAdapter(Collections.<DemoItem>emptyList());
+    RecyclerViewAdapter adapter = new RecyclerViewAdapter(demoUtils.moarItems(50));
+    recyclerView.setRequestedColumnCount(3);
     recyclerView.setAdapter(new AsymmetricRecyclerViewAdapter<>(this, recyclerView, adapter));
   }
 
@@ -52,13 +56,22 @@ public class RecyclerViewActivity extends AppCompatActivity {
           @Override public boolean onNavigationItemSelected(MenuItem menuItem) {
             menuItem.setChecked(true);
             drawerLayout.closeDrawers();
+            switch (menuItem.getItemId()) {
+              case R.id.nav_gridview:
+                startActivity(new Intent(RecyclerViewActivity.this, MainActivity.class));
+                finish();
+                break;
+              case R.id.nav_recyclerview:
+                startActivity(new Intent(RecyclerViewActivity.this, RecyclerViewActivity.class));
+                finish();
+                break;
+            }
             return true;
           }
         });
   }
 
-  static class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
-
+  static class RecyclerViewAdapter extends AGVRecyclerViewAdapter<ViewHolder> {
     private final List<DemoItem> items;
 
     public RecyclerViewAdapter(List<DemoItem> items) {
@@ -76,6 +89,22 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override public int getItemCount() {
       return items.size();
     }
+
+    @Override public AsymmetricItem getItem(int position) {
+      return items.get(position);
+    }
+
+    @Override public int getItemViewType(int position) {
+      return position % 2 == 0 ? 1 : 0;
+    }
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == android.R.id.home) {
+      drawerLayout.openDrawer(GravityCompat.START);
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {
@@ -86,11 +115,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     public void bind(DemoItem item) {
       TextView textView;
-      if (getItemViewType() == 0) {
+//      if (getItemViewType() == 0) {
         textView = (TextView) itemView.findViewById(R.id.textview);
-      } else {
-        textView = (TextView) itemView.findViewById(R.id.textview_odd);
-      }
+//      } else {
+//        textView = (TextView) itemView.findViewById(R.id.textview_odd);
+//      }
 
       textView.setText(String.valueOf(item.getPosition()));
     }

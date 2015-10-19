@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.felipecsl.asymmetricgridview.library;
+package com.felipecsl.asymmetricgridview;
 
 import android.annotation.TargetApi;
 import android.os.Build;

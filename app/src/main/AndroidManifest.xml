@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.felipecsl.asymmetricgridview.app"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          android:installLocation="preferExternal">
+<manifest
+  package="com.felipecsl.asymmetricgridview.app"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:installLocation="preferExternal">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.AppTheme">
-        <activity
-            android:name="com.felipecsl.asymmetricgridview.app.MainActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+  <application
+    android:allowBackup="true"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.AppTheme">
+    <activity
+      android:name="com.felipecsl.asymmetricgridview.app.MainActivity"
+      android:label="ListView sample">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.felipecsl.asymmetricgridview.app.RecyclerViewActivity"/>
-    </application>
+    <activity
+      android:name="com.felipecsl.asymmetricgridview.app.RecyclerViewActivity"
+      android:label="RecyclerView sample"/>
+  </application>
 
 </manifest>

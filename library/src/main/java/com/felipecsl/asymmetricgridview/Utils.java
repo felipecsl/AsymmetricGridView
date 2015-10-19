@@ -1,18 +1,17 @@
-package com.felipecsl.asymmetricgridview.library;
+package com.felipecsl.asymmetricgridview;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-public class Utils {
-
+public final class Utils {
   public static int dpToPx(final Context context, final float dp) {
     // Took from http://stackoverflow.com/questions/8309354/formula-px-to-dp-dp-to-px-android
     final float scale = context.getResources().getDisplayMetrics().density;
     return (int) ((dp * scale) + 0.5f);
   }
 
-  public static int getScreenWidth(final Context context) {
+  static int getScreenWidth(final Context context) {
     if (context == null) {
       return 0;
     }
@@ -25,7 +24,7 @@ public class Utils {
    * @param context valid context
    * @return DisplayMetrics object
    */
-  public static DisplayMetrics getDisplayMetrics(final Context context) {
+  static DisplayMetrics getDisplayMetrics(final Context context) {
     final WindowManager
         windowManager =
         (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);

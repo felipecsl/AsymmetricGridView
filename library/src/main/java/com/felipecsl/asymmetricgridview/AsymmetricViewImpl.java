@@ -1,19 +1,12 @@
-package com.felipecsl.asymmetricgridview.library.widget;
+package com.felipecsl.asymmetricgridview;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
-import com.felipecsl.asymmetricgridview.library.Utils;
-
-public class AsymmetricGridView extends ListView {
-
+final class AsymmetricViewImpl {
   private static final int DEFAULT_COLUMN_COUNT = 2;
   protected int numColumns = DEFAULT_COLUMN_COUNT;
   protected int requestedHorizontalSpacing;
@@ -21,61 +14,9 @@ public class AsymmetricGridView extends ListView {
   protected int requestedColumnCount;
   protected boolean allowReordering;
   protected boolean debugging;
-  protected AsymmetricGridViewAdapter gridAdapter;
-  protected OnItemClickListener onItemClickListener;
-  protected OnItemLongClickListener onItemLongClickListener;
 
-  public AsymmetricGridView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-
+  AsymmetricViewImpl(Context context) {
     requestedHorizontalSpacing = Utils.dpToPx(context, 5);
-
-    final ViewTreeObserver vto = getViewTreeObserver();
-    if (vto != null) {
-      vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override public void onGlobalLayout() {
-          //noinspection deprecation
-          getViewTreeObserver().removeGlobalOnLayoutListener(this);
-          determineColumns();
-          if (gridAdapter != null) {
-            gridAdapter.recalculateItemsPerRow();
-          }
-        }
-      });
-    }
-  }
-
-  @Override public void setOnItemClickListener(OnItemClickListener listener) {
-    onItemClickListener = listener;
-  }
-
-  protected void fireOnItemClick(int position, View v) {
-    if (onItemClickListener != null) {
-      onItemClickListener.onItemClick(this, v, position, v.getId());
-    }
-  }
-
-  @Override public void setOnItemLongClickListener(OnItemLongClickListener listener) {
-    onItemLongClickListener = listener;
-  }
-
-  protected boolean fireOnItemLongClick(int position, View v) {
-    return onItemLongClickListener != null && onItemLongClickListener
-        .onItemLongClick(this, v, position, v.getId());
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public void setAdapter(@NonNull ListAdapter adapter) {
-    if (!(adapter instanceof AsymmetricGridViewAdapter)) {
-      throw new UnsupportedOperationException(
-          "Adapter must be an instance of AsymmetricGridViewAdapter");
-    }
-
-    gridAdapter = (AsymmetricGridViewAdapter) adapter;
-    super.setAdapter(adapter);
-
-    gridAdapter.recalculateItemsPerRow();
   }
 
   public void setRequestedColumnWidth(int width) {
@@ -94,18 +35,12 @@ public class AsymmetricGridView extends ListView {
     requestedHorizontalSpacing = spacing;
   }
 
-  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    determineColumns();
-  }
-
-  public int determineColumns() {
+  public int determineColumns(int availableSpace) {
     int numColumns;
-    int availableSpace = getAvailableSpace();
 
     if (requestedColumnWidth > 0) {
       numColumns = (availableSpace + requestedHorizontalSpacing) /
-                   (requestedColumnWidth + requestedHorizontalSpacing);
+          (requestedColumnWidth + requestedHorizontalSpacing);
     } else if (requestedColumnCount > 0) {
       numColumns = requestedColumnCount;
     } else {
@@ -122,9 +57,7 @@ public class AsymmetricGridView extends ListView {
     return numColumns;
   }
 
-  @Override @NonNull
-  public Parcelable onSaveInstanceState() {
-    Parcelable superState = super.onSaveInstanceState();
+  public Parcelable onSaveInstanceState(Parcelable superState) {
     SavedState ss = new SavedState(superState);
     ss.allowReordering = allowReordering;
     ss.debugging = debugging;
@@ -132,40 +65,24 @@ public class AsymmetricGridView extends ListView {
     ss.requestedColumnCount = requestedColumnCount;
     ss.requestedColumnWidth = requestedColumnWidth;
     ss.requestedHorizontalSpacing = requestedHorizontalSpacing;
-
     return ss;
   }
 
-  @Override
-  public void onRestoreInstanceState(Parcelable state) {
-    if (!(state instanceof SavedState)) {
-      super.onRestoreInstanceState(state);
-      return;
-    }
-
-    SavedState ss = (SavedState) state;
-    super.onRestoreInstanceState(ss.getSuperState());
-
+  public void onRestoreInstanceState(SavedState ss) {
     allowReordering = ss.allowReordering;
     debugging = ss.debugging;
     numColumns = ss.numColumns;
     requestedColumnCount = ss.requestedColumnCount;
     requestedColumnWidth = ss.requestedColumnWidth;
     requestedHorizontalSpacing = ss.requestedHorizontalSpacing;
-
-    setSelectionFromTop(20, 0);
   }
 
   public int getNumColumns() {
     return numColumns;
   }
 
-  public int getColumnWidth() {
-    return (getAvailableSpace() - ((numColumns - 1) * requestedHorizontalSpacing)) / numColumns;
-  }
-
-  public int getAvailableSpace() {
-    return getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+  public int getColumnWidth(int availableSpace) {
+    return (availableSpace - ((numColumns - 1) * requestedHorizontalSpacing)) / numColumns;
   }
 
   public boolean isAllowReordering() {
@@ -174,9 +91,6 @@ public class AsymmetricGridView extends ListView {
 
   public void setAllowReordering(boolean allowReordering) {
     this.allowReordering = allowReordering;
-    if (gridAdapter != null) {
-      gridAdapter.recalculateItemsPerRow();
-    }
   }
 
   public boolean isDebugging() {
@@ -187,8 +101,7 @@ public class AsymmetricGridView extends ListView {
     this.debugging = debugging;
   }
 
-  public static class SavedState extends BaseSavedState {
-
+  static class SavedState extends View.BaseSavedState {
     int numColumns;
     int requestedColumnWidth;
     int requestedColumnCount;
@@ -200,7 +113,7 @@ public class AsymmetricGridView extends ListView {
     Parcelable adapterState;
     ClassLoader loader;
 
-    public SavedState(Parcelable superState) {
+    SavedState(Parcelable superState) {
       super(superState);
     }
 
@@ -218,8 +131,7 @@ public class AsymmetricGridView extends ListView {
       adapterState = in.readParcelable(loader);
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
+    @Override public void writeToParcel(@NonNull Parcel dest, int flags) {
       super.writeToParcel(dest, flags);
 
       dest.writeInt(numColumns);
@@ -235,13 +147,11 @@ public class AsymmetricGridView extends ListView {
 
     public static final Parcelable.Creator<SavedState> CREATOR =
         new Parcelable.Creator<SavedState>() {
-          @Override
-          public SavedState createFromParcel(@NonNull Parcel in) {
+          @Override public SavedState createFromParcel(@NonNull Parcel in) {
             return new SavedState(in);
           }
 
-          @Override @NonNull
-          public SavedState[] newArray(int size) {
+          @Override @NonNull public SavedState[] newArray(int size) {
             return new SavedState[size];
           }
         };

@@ -1,4 +1,4 @@
-package com.felipecsl.asymmetricgridview.library.widget;
+package com.felipecsl.asymmetricgridview;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import java.util.Stack;
 
 class ObjectPool<T> implements Parcelable {
-
   Stack<T> stack = new Stack<>();
   PoolObjectFactory<T> factory;
   PoolStats stats;

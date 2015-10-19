@@ -1,21 +1,18 @@
-package com.felipecsl.asymmetricgridview.library.widget;
+package com.felipecsl.asymmetricgridview;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
-
 import java.util.ArrayList;
 import java.util.List;
 
-class RowInfo<T extends AsymmetricItem> implements Parcelable {
-
-  private final List<RowItem<T>> items;
+class RowInfo implements Parcelable {
+  private final List<RowItem> items;
   private final int rowHeight;
   private final float spaceLeft;
 
-  public RowInfo(int rowHeight, List<RowItem<T>> items, float spaceLeft) {
+  public RowInfo(int rowHeight, List<RowItem> items, float spaceLeft) {
     this.rowHeight = rowHeight;
     this.items = items;
     this.spaceLeft = spaceLeft;
@@ -31,11 +28,11 @@ class RowInfo<T extends AsymmetricItem> implements Parcelable {
     final ClassLoader classLoader = AsymmetricItem.class.getClassLoader();
 
     for (int i = 0; i < totalItems; i++) {
-      items.add(new RowItem(in.readInt(), (T) in.readParcelable(classLoader)));
+      items.add(new RowItem(in.readInt(), (AsymmetricItem) in.readParcelable(classLoader)));
     }
   }
 
-  public List<RowItem<T>> getItems() {
+  public List<RowItem> getItems() {
     return items;
   }
 
@@ -63,9 +60,8 @@ class RowInfo<T extends AsymmetricItem> implements Parcelable {
   }
 
   public static final Parcelable.Creator<RowInfo> CREATOR = new Parcelable.Creator<RowInfo>() {
-
     @Override public RowInfo createFromParcel(@NonNull Parcel in) {
-      return new RowInfo<>(in);
+      return new RowInfo(in);
     }
 
     @Override @NonNull public RowInfo[] newArray(final int size) {
