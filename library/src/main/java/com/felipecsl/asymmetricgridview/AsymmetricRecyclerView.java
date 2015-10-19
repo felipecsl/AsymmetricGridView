@@ -87,4 +87,8 @@ public final class AsymmetricRecyclerView extends RecyclerView implements Asymme
   public void setRequestedColumnCount(int requestedColumnCount) {
     viewImpl.setRequestedColumnCount(requestedColumnCount);
   }
+
+  public void setRequestedHorizontalSpacing(int spacing) {
+    viewImpl.setRequestedHorizontalSpacing(spacing);
+  }
 }

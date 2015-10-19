@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import com.felipecsl.asymmetricgridview.AGVRecyclerViewAdapter;
 import com.felipecsl.asymmetricgridview.AsymmetricItem;
 import com.felipecsl.asymmetricgridview.AsymmetricRecyclerView;
 import com.felipecsl.asymmetricgridview.AsymmetricRecyclerViewAdapter;
+import com.felipecsl.asymmetricgridview.Utils;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 
 import java.util.List;
@@ -48,6 +48,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     RecyclerViewAdapter adapter = new RecyclerViewAdapter(demoUtils.moarItems(50));
     recyclerView.setRequestedColumnCount(3);
+    recyclerView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
     recyclerView.addItemDecoration(
         new SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.recycler_padding)));
     recyclerView.setAdapter(new AsymmetricRecyclerViewAdapter<>(this, recyclerView, adapter));
@@ -115,7 +116,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
     public ViewHolder(ViewGroup parent, int viewType) {
       super(LayoutInflater.from(parent.getContext()).inflate(
           viewType == 0 ? R.layout.adapter_item : R.layout.adapter_item_odd, parent, false));
-      Log.d("ViewHolder", "View type=" + viewType);
       if (viewType == 0) {
         textView = (TextView) itemView.findViewById(R.id.textview);
       } else {
