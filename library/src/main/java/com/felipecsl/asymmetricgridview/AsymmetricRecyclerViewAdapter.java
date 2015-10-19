@@ -2,7 +2,6 @@ package com.felipecsl.asymmetricgridview;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
 
 public final class AsymmetricRecyclerViewAdapter<T extends RecyclerView.ViewHolder>
@@ -43,8 +42,8 @@ public final class AsymmetricRecyclerViewAdapter<T extends RecyclerView.ViewHold
     wrappedAdapter.onBindViewHolder(holder.wrappedViewHolder, position);
   }
 
-  @Override public View getView(int actualIndex, View view, ViewGroup parent) {
-    throw new IllegalStateException("Method implemented for this adapter type");
+  @Override public int getItemViewType(int position) {
+    return wrappedAdapter.getItemViewType(position);
   }
 
   void recalculateItemsPerRow() {

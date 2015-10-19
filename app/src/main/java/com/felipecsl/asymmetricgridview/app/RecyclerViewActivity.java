@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -47,6 +48,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     RecyclerViewAdapter adapter = new RecyclerViewAdapter(demoUtils.moarItems(50));
     recyclerView.setRequestedColumnCount(3);
+    recyclerView.addItemDecoration(
+        new SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.recycler_padding)));
     recyclerView.setAdapter(new AsymmetricRecyclerViewAdapter<>(this, recyclerView, adapter));
   }
 
@@ -71,7 +74,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         });
   }
 
-  static class RecyclerViewAdapter extends AGVRecyclerViewAdapter<ViewHolder> {
+  class RecyclerViewAdapter extends AGVRecyclerViewAdapter<ViewHolder> {
     private final List<DemoItem> items;
 
     public RecyclerViewAdapter(List<DemoItem> items) {
@@ -107,20 +110,20 @@ public class RecyclerViewActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  static class ViewHolder extends RecyclerView.ViewHolder {
+  class ViewHolder extends RecyclerView.ViewHolder {
+    private final TextView textView;
     public ViewHolder(ViewGroup parent, int viewType) {
       super(LayoutInflater.from(parent.getContext()).inflate(
           viewType == 0 ? R.layout.adapter_item : R.layout.adapter_item_odd, parent, false));
+      Log.d("ViewHolder", "View type=" + viewType);
+      if (viewType == 0) {
+        textView = (TextView) itemView.findViewById(R.id.textview);
+      } else {
+        textView = (TextView) itemView.findViewById(R.id.textview_odd);
+      }
     }
 
     public void bind(DemoItem item) {
-      TextView textView;
-//      if (getItemViewType() == 0) {
-        textView = (TextView) itemView.findViewById(R.id.textview);
-//      } else {
-//        textView = (TextView) itemView.findViewById(R.id.textview_odd);
-//      }
-
       textView.setText(String.valueOf(item.getPosition()));
     }
   }
