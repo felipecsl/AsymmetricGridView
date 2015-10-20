@@ -329,8 +329,8 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
     }
   }
 
-  private static class ViewHolder extends RecyclerView.ViewHolder {
-    private ViewHolder(LinearLayout itemView) {
+  static class ViewHolder extends RecyclerView.ViewHolder {
+    ViewHolder(LinearLayout itemView) {
       super(itemView);
     }
 
