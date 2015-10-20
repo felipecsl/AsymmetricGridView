@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     RecyclerViewAdapter adapter = new RecyclerViewAdapter(demoUtils.moarItems(50));
     recyclerView.setRequestedColumnCount(3);
+    recyclerView.setDebugging(true);
     recyclerView.setRequestedHorizontalSpacing(Utils.dpToPx(this, 3));
     recyclerView.addItemDecoration(
         new SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.recycler_padding)));
@@ -83,10 +85,12 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      Log.d("RecyclerViewActivity", "onCreateView");
       return new ViewHolder(parent, viewType);
     }
 
     @Override public void onBindViewHolder(ViewHolder holder, int position) {
+      Log.d("RecyclerViewActivity", "onBindView position=" + position);
       holder.bind(items.get(position));
     }
 

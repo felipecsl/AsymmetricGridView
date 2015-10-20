@@ -91,4 +91,8 @@ public final class AsymmetricRecyclerView extends RecyclerView implements Asymme
   public void setRequestedHorizontalSpacing(int spacing) {
     viewImpl.setRequestedHorizontalSpacing(spacing);
   }
+
+  public void setDebugging(boolean debugging) {
+    viewImpl.setDebugging(debugging);
+  }
 }

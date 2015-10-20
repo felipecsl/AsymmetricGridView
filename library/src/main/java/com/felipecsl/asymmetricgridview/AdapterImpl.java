@@ -105,7 +105,7 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
 
   void onBindViewHolder(ViewHolder holder, int position, ViewGroup parent) {
     if (debugEnabled) {
-      Log.d(TAG, "getView(" + String.valueOf(position) + ")");
+      Log.d(TAG, "onBindViewHolder(" + String.valueOf(position) + ")");
     }
 
     RowInfo rowInfo = itemsPerRow.get(position);
@@ -174,6 +174,10 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
   }
 
   ViewHolder onCreateViewHolder() {
+    if (debugEnabled) {
+      Log.d(TAG, "onCreateViewHolder()");
+    }
+
     LinearLayout layout = new LinearLayout(context, null);
     if (debugEnabled) {
       layout.setBackgroundColor(Color.parseColor("#83F27B"));
@@ -248,7 +252,6 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
         childLayout.setBackgroundColor(Color.parseColor("#837BF2"));
       }
 
-      //noinspection ResourceType
       childLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
       childLayout.setDividerDrawable(
           ContextCompat.getDrawable(context, R.drawable.item_divider_vertical));
@@ -267,7 +270,7 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
     @Override protected final List<RowInfo> doInBackground(Void... params) {
       // We need a map in order to associate the item position in the wrapped adapter.
       List<RowItem> itemsToAdd = new ArrayList<>();
-      for (int i = 0; i < agvAdapter.getItemCount(); i++) {
+      for (int i = 0; i < agvAdapter.getActualItemCount(); i++) {
         try {
           itemsToAdd.add(new RowItem(i, agvAdapter.getItem(i)));
         } catch (CursorIndexOutOfBoundsException e) {

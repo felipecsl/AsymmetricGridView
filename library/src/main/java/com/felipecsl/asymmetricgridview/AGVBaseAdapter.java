@@ -3,11 +3,11 @@ package com.felipecsl.asymmetricgridview;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-interface AGVBaseAdapter<VH extends RecyclerView.ViewHolder> {
-  int getItemCount();
+interface AGVBaseAdapter<T extends RecyclerView.ViewHolder> {
+  int getActualItemCount();
   AsymmetricItem getItem(int position);
   void notifyDataSetChanged();
   int getItemViewType(int actualIndex);
-  AsymmetricViewHolder<VH> onCreateAsymmetricViewHolder(int position, ViewGroup parent, int viewType);
-  void onBindAsymmetricViewHolder(AsymmetricViewHolder<VH> holder, int position);
+  AsymmetricViewHolder<T> onCreateAsymmetricViewHolder(int pos, ViewGroup parent, int viewType);
+  void onBindAsymmetricViewHolder(AsymmetricViewHolder<T> holder, int position);
 }

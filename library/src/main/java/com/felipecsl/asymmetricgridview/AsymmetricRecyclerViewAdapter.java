@@ -15,6 +15,11 @@ public final class AsymmetricRecyclerViewAdapter<T extends RecyclerView.ViewHold
     this.recyclerView = recyclerView;
     this.wrappedAdapter = wrappedAdapter;
     this.adapterImpl = new AdapterImpl(context, this, recyclerView);
+    wrappedAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+      @Override public void onChanged() {
+        recalculateItemsPerRow();
+      }
+    });
   }
 
   @Override public AdapterImpl.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -26,6 +31,11 @@ public final class AsymmetricRecyclerViewAdapter<T extends RecyclerView.ViewHold
   }
 
   @Override public int getItemCount() {
+    // This is the row count for RecyclerView display purposes, not the actual item count
+    return adapterImpl.getRowCount();
+  }
+
+  @Override public int getActualItemCount() {
     return wrappedAdapter.getItemCount();
   }
 

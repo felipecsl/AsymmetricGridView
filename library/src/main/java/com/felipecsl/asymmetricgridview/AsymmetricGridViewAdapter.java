@@ -59,7 +59,7 @@ public final class AsymmetricGridViewAdapter extends BaseAdapter
     return adapterImpl.getRowCount();
   }
 
-  @Override public int getItemCount() {
+  @Override public int getActualItemCount() {
     return wrappedAdapter.getCount();
   }
 
