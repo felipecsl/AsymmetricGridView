@@ -1,6 +1,7 @@
 # AsymmetricGridView
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-AsymmetricGridView-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1186)
+[![Build Status](https://travis-ci.org/felipecsl/AsymmetricGridView.svg?branch=master)](https://travis-ci.org/felipecsl/AsymmetricGridView)
 
 An Android custom ListView that implements multiple columns and variable sized elements.
 
