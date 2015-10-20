@@ -29,7 +29,6 @@ your own adapter to the AsymmetricGridViewAdapter constructor instead of extendi
 In your ``build.gradle`` file:
 
 ```groovy
-
 dependencies {
     compile 'com.felipecsl.asymmetricgridview:library:2.0.1'
 }
@@ -78,6 +77,8 @@ listView.setAllowReordering(true);
 
 listView.isAllowReordering(); // true
 ```
+
+Snapshots of the development version are available in [Sonatype's `snapshots` repository](https://oss.sonatype.org/content/repositories/snapshots/).
 
 Works with Android 2.3.x and above.
 
