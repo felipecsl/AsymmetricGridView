@@ -8,6 +8,6 @@ interface AGVBaseAdapter<T extends RecyclerView.ViewHolder> {
   AsymmetricItem getItem(int position);
   void notifyDataSetChanged();
   int getItemViewType(int actualIndex);
-  AsymmetricViewHolder<T> onCreateAsymmetricViewHolder(int pos, ViewGroup parent, int viewType);
-  void onBindAsymmetricViewHolder(AsymmetricViewHolder<T> holder, int position);
+  AsymmetricViewHolder<T> onCreateAsymmetricViewHolder(int position, ViewGroup parent, int viewType);
+  void onBindAsymmetricViewHolder(AsymmetricViewHolder<T> holder, ViewGroup parent, int position);
 }

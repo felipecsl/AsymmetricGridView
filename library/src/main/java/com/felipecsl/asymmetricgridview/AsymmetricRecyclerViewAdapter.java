@@ -48,7 +48,8 @@ public final class AsymmetricRecyclerViewAdapter<T extends RecyclerView.ViewHold
     return new AsymmetricViewHolder<>(wrappedAdapter.onCreateViewHolder(parent, viewType));
   }
 
-  @Override public void onBindAsymmetricViewHolder(AsymmetricViewHolder<T> holder, int position) {
+  @Override public void onBindAsymmetricViewHolder(
+      AsymmetricViewHolder<T> holder, ViewGroup parent, int position) {
     wrappedAdapter.onBindViewHolder(holder.wrappedViewHolder, position);
   }
 

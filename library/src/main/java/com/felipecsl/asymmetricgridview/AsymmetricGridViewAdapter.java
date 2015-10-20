@@ -40,8 +40,9 @@ public final class AsymmetricGridViewAdapter extends BaseAdapter
     return new AsymmetricViewHolder<>(wrappedAdapter.getView(position, null, parent));
   }
 
-  @Override public void onBindAsymmetricViewHolder(AsymmetricViewHolder holder, int position) {
-    // no-op
+  @Override public void onBindAsymmetricViewHolder(
+      AsymmetricViewHolder holder, ViewGroup parent, int position) {
+    wrappedAdapter.getView(position, holder.itemView, parent);
   }
 
   @Override public long getItemId(int position) {
@@ -57,6 +58,10 @@ public final class AsymmetricGridViewAdapter extends BaseAdapter
   @Override public int getCount() {
     // Returns the row count for ListView display purposes
     return adapterImpl.getRowCount();
+  }
+
+  @Override public int getItemViewType(int position) {
+    return wrappedAdapter.getItemViewType(position);
   }
 
   @Override public int getActualItemCount() {

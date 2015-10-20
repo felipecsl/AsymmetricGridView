@@ -3,6 +3,7 @@ package com.felipecsl.asymmetricgridview;
 import android.content.Context;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
@@ -22,8 +23,7 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
   private static final String TAG = "AdapterImpl";
   private final Map<Integer, RowInfo> itemsPerRow = new HashMap<>();
   private final ObjectPool<LinearLayout> linearLayoutPool;
-  private final ObjectPool<View> objectPool = new ObjectPool<>();
-  private final Map<Integer, ObjectPool<View>> convertViewMap = new ArrayMap<>();
+  private final Map<Integer, ObjectPool<AsymmetricViewHolder<?>>> viewHoldersMap = new ArrayMap<>();
   private final Context context;
   private final AGVBaseAdapter<?> agvAdapter;
   private final AsymmetricView listView;
@@ -84,23 +84,22 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
     }
 
     linearLayoutPool.clear();
-    objectPool.clear();
     itemsPerRow.clear();
 
     asyncTask = new ProcessRowsTask();
-    asyncTask.executeSerially();
+    asyncTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
   }
 
   @Override public void onClick(@NonNull View v) {
     // noinspection unchecked
-    RowItem rowItem = (RowItem) v.getTag();
-    listView.fireOnItemClick(rowItem.getIndex(), v);
+    ViewState rowItem = (ViewState) v.getTag();
+    listView.fireOnItemClick(rowItem.rowItem.getIndex(), v);
   }
 
   @Override public boolean onLongClick(@NonNull View v) {
     // noinspection unchecked
-    RowItem rowItem = (RowItem) v.getTag();
-    return listView.fireOnItemLongClick(rowItem.getIndex(), v);
+    ViewState rowItem = (ViewState) v.getTag();
+    return listView.fireOnItemLongClick(rowItem.rowItem.getIndex(), v);
   }
 
   void onBindViewHolder(ViewHolder holder, int position, ViewGroup parent) {
@@ -138,16 +137,18 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
 
         int actualIndex = currentItem.getIndex();
         int viewType = agvAdapter.getItemViewType(actualIndex);
-        ObjectPool<View> pool = convertViewMap.get(viewType);
+        ObjectPool<AsymmetricViewHolder<?>> pool = viewHoldersMap.get(viewType);
         if (pool == null) {
           pool = new ObjectPool<>();
-          convertViewMap.put(actualIndex, pool);
+          viewHoldersMap.put(viewType, pool);
         }
-        AsymmetricViewHolder viewHolder =
-            agvAdapter.onCreateAsymmetricViewHolder(actualIndex, parent, viewType);
-        agvAdapter.onBindAsymmetricViewHolder(viewHolder, actualIndex);
+        AsymmetricViewHolder viewHolder = pool.get();
+        if (viewHolder == null) {
+          viewHolder = agvAdapter.onCreateAsymmetricViewHolder(actualIndex, parent, viewType);
+        }
+        agvAdapter.onBindAsymmetricViewHolder(viewHolder, parent, actualIndex);
         View view = viewHolder.itemView;
-        view.setTag(currentItem);
+        view.setTag(new ViewState(viewType, currentItem, viewHolder));
         view.setOnClickListener(this);
         view.setOnLongClickListener(this);
 
@@ -169,7 +170,9 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
 
     if (debugEnabled && position % 20 == 0) {
       Log.d(TAG, linearLayoutPool.getStats("LinearLayout"));
-      Log.d(TAG, objectPool.getStats("Views"));
+      for (Map.Entry<Integer, ObjectPool<AsymmetricViewHolder<?>>> e : viewHoldersMap.entrySet()) {
+        Log.d(TAG, e.getValue().getStats("ConvertViewMap, viewType=" + e.getKey()));
+      }
     }
   }
 
@@ -228,11 +231,16 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
 
   private LinearLayout initializeLayout(LinearLayout layout) {
     // Clear all layout children before starting
-    for (int j = 0; j < layout.getChildCount(); j++) {
+    int childCount = layout.getChildCount();
+    for (int j = 0; j < childCount; j++) {
       LinearLayout tempChild = (LinearLayout) layout.getChildAt(j);
       linearLayoutPool.put(tempChild);
-      for (int k = 0; k < tempChild.getChildCount(); k++) {
-        objectPool.put(tempChild.getChildAt(k));
+      int innerChildCount = tempChild.getChildCount();
+      for (int k = 0; k < innerChildCount; k++) {
+        View innerView = tempChild.getChildAt(k);
+        ViewState viewState = (ViewState) innerView.getTag();
+        ObjectPool<AsymmetricViewHolder<?>> pool = viewHoldersMap.get(viewState.viewType);
+        pool.put(viewState.viewHolder);
       }
       tempChild.removeAllViews();
     }
@@ -266,7 +274,7 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
     return childLayout;
   }
 
-  class ProcessRowsTask extends AsyncTaskCompat<Void, Void, List<RowInfo>> {
+  class ProcessRowsTask extends AsyncTask<Void, Void, List<RowInfo>> {
     @Override protected final List<RowInfo> doInBackground(Void... params) {
       // We need a map in order to associate the item position in the wrapped adapter.
       List<RowItem> itemsToAdd = new ArrayList<>();
@@ -316,6 +324,18 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
       }
 
       return rows;
+    }
+  }
+
+  private static class ViewState {
+    private final int viewType;
+    private final RowItem rowItem;
+    private final AsymmetricViewHolder<?> viewHolder;
+
+    private ViewState(int viewType, RowItem rowItem, AsymmetricViewHolder<?> viewHolder) {
+      this.viewType = viewType;
+      this.rowItem = rowItem;
+      this.viewHolder = viewHolder;
     }
   }
 }
