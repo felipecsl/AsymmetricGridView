@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: 'gradle-maven-push.gradle'
 
 android {
     compileSdkVersion 23
@@ -28,5 +29,3 @@ dependencies {
     compile 'com.android.support:support-annotations:23.1.0'
     compile 'com.android.support:recyclerview-v7:23.1.0'
 }
-
-apply from: 'gradle-mvn-push.gradle'

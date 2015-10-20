@@ -1,0 +1,33 @@
+language: android
+
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-23.0.0
+    - android-23
+    - extra-android-m2repository
+    - extra-android-support
+    - extra-google-m2repository
+
+after_success:
+  - .buildscript/deploy_snapshot.sh
+
+jdk:
+  - oraclejdk7
+  - oraclejdk8
+
+branches:
+  except:
+    - gh-pages
+
+notifications:
+  email: false
+
+script: ./gradlew clean assemble
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2

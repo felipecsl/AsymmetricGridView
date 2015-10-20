@@ -196,16 +196,6 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
     return new ViewHolder(layout);
   }
 
-  static class ViewHolder extends RecyclerView.ViewHolder {
-    ViewHolder(LinearLayout itemView) {
-      super(itemView);
-    }
-
-    LinearLayout itemView() {
-      return (LinearLayout) itemView;
-    }
-  }
-
   int getRowHeight(AsymmetricItem item) {
     return getRowHeight(item.getRowSpan());
   }
@@ -336,6 +326,16 @@ final class AdapterImpl implements View.OnClickListener, View.OnLongClickListene
       this.viewType = viewType;
       this.rowItem = rowItem;
       this.viewHolder = viewHolder;
+    }
+  }
+
+  private static class ViewHolder extends RecyclerView.ViewHolder {
+    private ViewHolder(LinearLayout itemView) {
+      super(itemView);
+    }
+
+    LinearLayout itemView() {
+      return (LinearLayout) itemView;
     }
   }
 }
