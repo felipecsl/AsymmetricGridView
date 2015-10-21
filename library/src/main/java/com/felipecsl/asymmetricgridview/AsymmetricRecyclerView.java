@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-public final class AsymmetricRecyclerView extends RecyclerView implements AsymmetricView {
+public class AsymmetricRecyclerView extends RecyclerView implements AsymmetricView {
   private final AsymmetricViewImpl viewImpl;
   private AsymmetricRecyclerViewAdapter<?> adapter;
 
