@@ -3,6 +3,7 @@ package com.felipecsl.asymmetricgridview.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,11 +24,8 @@ import com.felipecsl.asymmetricgridview.app.widget.DefaultCursorAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.DefaultListAdapter;
 import com.felipecsl.asymmetricgridview.app.widget.DemoAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
   private static final boolean USE_CURSOR_ADAPTER = false;
@@ -111,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
   }
 
-  @Override protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
+  @Override protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
     demoUtils.currentOffset = savedInstanceState.getInt("currentOffset");
     int count = savedInstanceState.getInt("itemCount");
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     listView.setAdapter(getNewAdapter());
   }
 
-  @Override public void onItemClick(@NotNull AdapterView<?> parent, @NotNull View view,
+  @Override public void onItemClick(@NonNull AdapterView<?> parent, @NonNull View view,
       int position, long id) {
     Toast.makeText(this, "Item " + position + " clicked", Toast.LENGTH_SHORT).show();
   }

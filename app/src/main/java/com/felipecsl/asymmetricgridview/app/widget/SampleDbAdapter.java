@@ -6,16 +6,14 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 public class SampleDbAdapter {
-
   public static final String KEY_TEXT = "text";
   private static final String KEY_ROW_SPAN = "rowspan";
   private static final String KEY_COL_SPAN = "colspan";
@@ -44,12 +42,12 @@ public class SampleDbAdapter {
       super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    @Override public void onCreate(@NotNull SQLiteDatabase db) {
+    @Override public void onCreate(@NonNull SQLiteDatabase db) {
       Log.w(TAG, DATABASE_CREATE);
       db.execSQL(DATABASE_CREATE);
     }
 
-    @Override public void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion, int newVersion) {
+    @Override public void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
       Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                  + newVersion + ", which will destroy all old data");
       db.execSQL("DROP TABLE IF EXISTS " + SQLITE_TABLE);

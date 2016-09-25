@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import com.felipecsl.asymmetricgridview.AsymmetricItem;
 
 public class DemoItem implements AsymmetricItem {
-
   private int columnSpan;
   private int rowSpan;
   private int position;
@@ -60,7 +59,6 @@ public class DemoItem implements AsymmetricItem {
 
   /* Parcelable interface implementation */
   public static final Parcelable.Creator<DemoItem> CREATOR = new Parcelable.Creator<DemoItem>() {
-
     @Override public DemoItem createFromParcel(@NonNull Parcel in) {
       return new DemoItem(in);
     }

@@ -1,6 +1,7 @@
 package com.felipecsl.asymmetricgridview.app.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,6 @@ import android.widget.TextView;
 
 import com.felipecsl.asymmetricgridview.app.R;
 import com.felipecsl.asymmetricgridview.app.model.DemoItem;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class DefaultListAdapter extends ArrayAdapter<DemoItem> implements DemoAd
   }
 
   @Override
-  public View getView(int position, View convertView, @NotNull ViewGroup parent) {
+  public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     View v;
 
     DemoItem item = getItem(position);

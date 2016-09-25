@@ -80,7 +80,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
   class RecyclerViewAdapter extends AGVRecyclerViewAdapter<ViewHolder> {
     private final List<DemoItem> items;
 
-    public RecyclerViewAdapter(List<DemoItem> items) {
+    RecyclerViewAdapter(List<DemoItem> items) {
       this.items = items;
     }
 
@@ -117,7 +117,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
   class ViewHolder extends RecyclerView.ViewHolder {
     private final TextView textView;
-    public ViewHolder(ViewGroup parent, int viewType) {
+
+    ViewHolder(ViewGroup parent, int viewType) {
       super(LayoutInflater.from(parent.getContext()).inflate(
           viewType == 0 ? R.layout.adapter_item : R.layout.adapter_item_odd, parent, false));
       if (viewType == 0) {
@@ -127,7 +128,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
       }
     }
 
-    public void bind(DemoItem item) {
+    void bind(DemoItem item) {
       textView.setText(String.valueOf(item.getPosition()));
     }
   }

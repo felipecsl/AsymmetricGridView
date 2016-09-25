@@ -10,7 +10,6 @@ import com.felipecsl.asymmetricgridview.app.model.DemoItem;
 import java.util.List;
 
 public class DefaultCursorAdapter extends SimpleCursorAdapter implements DemoAdapter {
-
   private final Context context;
 
   public DefaultCursorAdapter(Context context, List<DemoItem> items) {
@@ -48,9 +47,8 @@ public class DefaultCursorAdapter extends SimpleCursorAdapter implements DemoAda
                    .fetchAllData());
   }
 
-  public static class CursorAdapterItem extends DemoItem {
-
-    public CursorAdapterItem(SQLiteCursor cursor) {
+  static class CursorAdapterItem extends DemoItem {
+    CursorAdapterItem(SQLiteCursor cursor) {
       super(cursor.getInt(3), cursor.getInt(2), cursor.getInt(1));
     }
   }
