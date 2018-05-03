@@ -30,7 +30,7 @@ In your ``build.gradle`` file:
 
 ```groovy
 dependencies {
-    compile 'com.felipecsl.asymmetricgridview:library:2.0.1'
+    implementation 'com.felipecsl.asymmetricgridview:library:2.0.1'
 }
 ```
 
