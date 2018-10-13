@@ -11,7 +11,7 @@ android:
 after_success:
 - ".buildscript/deploy_snapshot.sh"
 jdk:
-- oraclejdk7
+- openjdk7
 - oraclejdk8
 branches:
   except:
