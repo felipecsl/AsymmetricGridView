@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply from: 'gradle-maven-push.gradle'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 28
     }
 
     compileOptions {
@@ -17,7 +17,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.android.support:support-annotations:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "com.android.support:support-annotations:$supportLibVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
 }
