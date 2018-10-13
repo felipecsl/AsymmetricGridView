@@ -3,15 +3,14 @@ android:
   components:
   - tools
   - platform-tools
-  - build-tools-23.0.1
-  - android-23
+  - build-tools-28.0.3
+  - android-28
   - extra-android-m2repository
   - extra-android-support
   - extra-google-m2repository
 after_success:
 - ".buildscript/deploy_snapshot.sh"
 jdk:
-- oraclejdk7
 - oraclejdk8
 branches:
   except:
